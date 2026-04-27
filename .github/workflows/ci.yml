@@ -1,0 +1,113 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Generate test coverage report
+        run: ./gradlew jacocoTestReport
+
+      - name: Run Detekt
+        run: ./gradlew detekt
+
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: app/build/reports/jacoco/test/html
+
+  validate-qr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate QR format
+        run: ./scripts/validate_qr_format.sh
+
+  check-root:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check root detection
+        run: ./scripts/check_root_detection.sh
+
+  check-version-reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check version reset
+        run: ./scripts/check_version_reset.sh
+
+  check-quiz-selection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check quiz selection
+        run: ./scripts/check_quiz_selection.sh
+
+  check-database-encryption:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check database encryption
+        run: ./scripts/check_database_encryption.sh
+
+  check-pdf-conversion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check PDF conversion
+        run: ./scripts/check_pdf_conversion.sh
+
+  check-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check navigation
+        run: ./scripts/check_navigation.sh

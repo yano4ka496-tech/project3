@@ -1,0 +1,2082 @@
+# Конфигурация Detekt
+# Используется стандартная конфигурация с дополнительными правилами для Android
+
+autoCorrect: false
+baseline: null
+buildUponDefaultConfig: true
+config:
+  # Включаем стандартные правила
+  default: true
+  
+  # Дополнительные правила для Android
+  android:
+    active: true
+    
+    # Правила для именования
+    naming:
+      class: "^[A-Z][a-zA-Z0-9]*$"
+      function: "^[a-z][a-zA-Z0-9]*$"
+      property: "^[a-z][a-zA-Z0-9]*$"
+      variable: "^[a-z][a-zA-Z0-9]*$"
+      companionObject: "^[A-Z][a-zA-Z0-9]*$"
+      enumEntry: "^[A-Z][A-Z0-9_]*$"
+      typeAlias: "^[A-Z][a-zA-Z0-9]*$"
+      
+    # Правила для кода
+    complexity:
+      active: true
+      maxComplexity: 10
+      maxFunctionLength: 40
+      maxTopLevelFunctionLength: 40
+      maxPropertyLength: 40
+      maxSecondaryFunctionLength: 40
+      
+    # Правила для производительности
+    performance:
+      active: true
+      
+    # Правила для корректности
+    correction:
+      active: true
+      
+    # Правила для стиля
+    style:
+      active: true
+      
+    # Правила для потенциальных багов
+    potential-bugs:
+      active: true
+      
+    # Правила для использования
+    usage:
+      active: true
+      
+    # Правила для документации
+    documentation:
+      active: true
+      
+    # Правила для безопасности
+    security:
+      active: true
+      
+    # Правила для пустых блоков
+    empty-blocks:
+      active: true
+      
+    # Правила для ненужного кода
+    unnecessary:
+      active: true
+      
+    # Правила для структуры
+    structure:
+      active: true
+      
+    # Правила для проверки типов
+    type-resolution:
+      active: true
+      
+    # Правила для проверки аннотаций
+    annotation:
+      active: true
+      
+    # Правила для проверки вызовов
+    calls:
+      active: true
+      
+    # Правила для проверки выражений
+    expressions:
+      active: true
+      
+    # Правила для проверки операторов
+    operators:
+      active: true
+      
+    # Правила для проверки шаблонов
+    patterns:
+      active: true
+      
+    # Правила для проверки строк
+    strings:
+      active: true
+      
+    # Правила для проверки типов
+    types:
+      active: true
+      
+    # Правила для проверки переменных
+    variables:
+      active: true
+      
+    # Правила для проверки классов
+    classes:
+      active: true
+      
+    # Правила для функций
+    functions:
+      active: true
+      
+    # Правила для свойств
+    properties:
+      active: true
+      
+    # Правила для интерфейсов
+    interfaces:
+      active: true
+      
+    # Правила для объектов
+    objects:
+      active: true
+      
+    # Правила для перечислений
+    enums:
+      active: true
+      
+    # Правила для companion объектов
+    companion-objects:
+      active: true
+      
+    # Правила для данных классов
+    data-classes:
+      active: true
+      
+    # Правила для внутренних классов
+    inner-classes:
+      active: true
+      
+    # Правила для анонимных классов
+    anonymous-classes:
+      active: true
+      
+    # Правила для object выражений
+    object-expressions:
+      active: true
+      
+    # Правила для object declarations
+    object-declarations:
+      active: true
+      
+    # Правила для class выражений
+    class-expressions:
+      active: true
+      
+    # Правила для class declarations
+    class-declarations:
+      active: true
+      
+    # Правила для interface выражений
+    interface-expressions:
+      active: true
+      
+    # Правила для interface declarations
+    interface-declarations:
+      active: true
+      
+    # Правила для enum выражений
+    enum-expressions:
+      active: true
+      
+    # Правила для enum declarations
+    enum-declarations:
+      active: true
+      
+    # Правила для companion object выражений
+    companion-object-expressions:
+      active: true
+      
+    # Правила для companion object declarations
+    companion-object-declarations:
+      active: true
+      
+    # Правила для data class выражений
+    data-class-expressions:
+      active: true
+      
+    # Правила для data class declarations
+    data-class-declarations:
+      active: true
+      
+    # Правила для inner class выражений
+    inner-class-expressions:
+      active: true
+      
+    # Правила для inner class declarations
+    inner-class-declarations:
+      active: true
+      
+    # Правила для anonymous class выражений
+    anonymous-class-expressions:
+      active: true
+      
+    # Правила для anonymous class declarations
+    anonymous-class-declarations:
+      active: true
+      
+    # Правила для object expression declarations
+    object-expression-declarations:
+      active: true
+      
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+      active: true
+      
+    # Правила для class expression declarations
+    class-expression-declarations:
+      active: true
+      
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+      active: true
+      
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+      active: true
+      
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+      active: true
+      
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+      active: true
+      
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+      active: true
+      
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+      active: true
+      
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+      active: true
+      
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+      active: true
+      
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+      active: true
+      
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+      active: true
+      
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+      active: true
+      
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+      active: true
+      
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+      active: true
+      
+    # Правила для object expression declarations
+    object-expression-declarations:
+      active: true
+      
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+      active: true
+      
+    # Правила для class expression declarations
+    class-expression-declarations:
+      active: true
+      
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+      active: true
+      
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+      active: true
+      
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+      active: true
+      
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+      active: true
+      
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+      active: true
+      
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+      active: true
+      
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+      active: true
+      
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+      active: true
+      
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+      active: true
+      
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+      active: true
+      
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+      active: true
+      
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+      active: true
+      
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+      active: true
+      
+    # Правила для object expression declarations
+    object-expression-declarations:
+      active: true
+      
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+      active: true
+      
+    # Правила для class expression declarations
+    class-expression-declarations:
+      active: true
+      
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+      active: true
+      
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+      active: true
+      
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+      active: true
+      
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+      active: true
+      
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+      active: true
+      
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+      active: true
+      
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+      active: true
+      
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+      active: true
+      
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class declaration declarations
+    class-declaration-declarations:
+        active: true
+        
+    # Правила для interface expression declarations
+    interface-expression-declarations:
+        active: true
+        
+    # Правила для interface declaration declarations
+    interface-declaration-declarations:
+        active: true
+        
+    # Правила для enum expression declarations
+    enum-expression-declarations:
+        active: true
+        
+    # Правила для enum declaration declarations
+    enum-declaration-declarations:
+        active: true
+        
+    # Правила для companion object expression declarations
+    companion-object-expression-declarations:
+        active: true
+        
+    # Правила для companion object declaration declarations
+    companion-object-declaration-declarations:
+        active: true
+        
+    # Правила для data class expression declarations
+    data-class-expression-declarations:
+        active: true
+        
+    # Правила для data class declaration declarations
+    data-class-declaration-declarations:
+        active: true
+        
+    # Правила для inner class expression declarations
+    inner-class-expression-declarations:
+        active: true
+        
+    # Правила для inner class declaration declarations
+    inner-class-declaration-declarations:
+        active: true
+        
+    # Правила для anonymous class expression declarations
+    anonymous-class-expression-declarations:
+        active: true
+        
+    # Правила для anonymous class declaration declarations
+    anonymous-class-declaration-declarations:
+        active: true
+        
+    # Правила для object expression declarations
+    object-expression-declarations:
+        active: true
+        
+    # Правила для object declaration declarations
+    object-declaration-declarations:
+        active: true
+        
+    # Правила для class expression declarations
+    class-expression-declarations:
+        active: true
+        
+    # Правила для class

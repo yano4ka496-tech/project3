@@ -1,0 +1,82 @@
+# Конфигурация Detekt согласно конституции
+autoCorrect: false
+config:
+  max_line_length: 120
+  active_rule_sets:
+    - "core"
+    - "android"
+    - "comments"
+    - "complexity"
+    - "coroutines"
+    - "empty-blocks"
+    - "naming"
+    - "performance"
+    - "potential-bugs"
+    - "style"
+    - "exceptions"
+
+  comments:
+    ForbiddenComment: 
+      active: true
+      ignoreCommentPattern: "TODO|FIXME|HACK"
+      
+  complexity:
+    FunctionMaxComplexity: 
+      active: true
+      threshold: 10
+      
+  naming:
+    ClassNaming:
+      active: true
+      pattern: "[A-Z][a-zA-Z0-9]*"
+      
+    FunctionNaming:
+      active: true
+      pattern: "[a-z][a-zA-Z0-9]*"
+      
+    VariableNaming:
+      active: true
+      pattern: "[a-z][a-zA-Z0-9]*"
+      
+    PropertyNaming:
+      active: true
+      pattern: "[a-z][a-zA-Z0-9]*"
+      
+  style:
+    MagicNumber:
+      active: true
+      ignoreNumbers: "-1,0,1,2,3,4,5,6,7,8,9,10"
+      
+    LongParameterList:
+      active: true
+      ignoreDefaultParameters: true
+      threshold: 5
+      
+    UnusedPrivateMember:
+      active: true
+      
+  potential-bugs:
+    LateinitUsage:
+      active: true
+      
+    UnsafeCallOnNullableType:
+      active: true
+      
+    NullCheckFunction:
+      active: true
+      
+  android:
+    UselessLeaf:
+      active: true
+      
+    UselessActivity:
+      active: true
+      
+    UselessService:
+      active: true
+      
+    UselessBroadcastReceiver:
+      active: true
+      
+    UselessContentProvider:
+      active: true
