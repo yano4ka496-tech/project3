@@ -1,0 +1,6 @@
+- command: ls -la app/src/main/java/com/safeplant/
+  name: Проверка структуры модулей
+- command: ./gradlew tasks --all
+  name: Проверка настроек Gradle
+- command: ls -la .github/workflows/
+  name: Проверка CI/CD конфигурации

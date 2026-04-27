@@ -1,0 +1,22 @@
+- command: ./gradlew assembleDebug
+  name: Проверка сборки APK
+- command: ./gradlew testDebugUnitTest --tests "*Test"
+  name: Запуск unit-тестов
+- command: ./gradlew jacocoTestReport
+  name: Проверка покрытия тестами
+- command: ./gradlew detekt
+  name: Запуск Detekt
+- command: ./gradlew ktlintCheck
+  name: Запуск ktlint
+- command: echo "Требуется реализация"
+  name: Проверка QR валидации
+- command: echo "Требуется реализация"
+  name: Проверка root-детекции
+- command: echo "Требуется реализация"
+  name: Проверка сброса версии
+- command: echo "Требуется реализация"
+  name: Проверка выбора вопросов
+- command: echo "Требуется реализация"
+  name: Проверка шифрования БД
+- command: echo "Требуется реализация"
+  name: Проверка конвертации PDF

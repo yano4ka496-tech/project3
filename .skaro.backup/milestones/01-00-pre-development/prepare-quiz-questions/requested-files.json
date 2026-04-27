@@ -1,0 +1,14 @@
+[
+  "feature-quiz/src/main/java/com/safeplant/feature/quiz/QuizRepository.kt",
+  "feature-quiz/src/main/java/com/safeplant/feature/quiz/QuizViewModel.kt",
+  "feature-quiz/src/main/java/com/safeplant/feature/quiz/QuizScreen.kt",
+  "core-database/src/main/java/com/safeplant/core/database/entity/QuizResult.kt",
+  "core-database/src/main/java/com/safeplant/core/database/dao/QuizResultDao.kt",
+  "core-database/src/main/java/com/safeplant/core/database/AppDatabase.kt",
+  "core-storage/src/main/java/com/safeplant/core/storage/AssetManager.kt",
+  "feature-quiz/build.gradle.kts",
+  "app/src/main/res/values/strings.xml",
+  "app/src/main/assets/quiz/questions.json",
+  "core-navigation/src/main/java/com/safeplant/core/navigation/AppNavigation.kt",
+  "core-navigation/src/main/java/com/safeplant/core/navigation/NavigationDestinations.kt"
+]

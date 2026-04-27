@@ -1,16 +1,9 @@
 plugins {
     id("com.android.application") version "8.8.2" apply false
     id("org.jetbrains.kotlin.android") version "2.1.20" apply false
+    id("com.google.dagger.hilt.android") version "2.51.1" apply false
     id("com.google.devtools.ksp") version "2.1.20-2.0.0" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.20" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
-    id("kotlin-kapt") version "1.9.20" apply false
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
 }

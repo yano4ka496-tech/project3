@@ -1,0 +1,6 @@
+- command: ./gradlew assembleDebug
+  name: Проверка сборки APK
+- command: adb shell am start -n com.safeplant/.MainActivity
+  name: Проверка навигации между экранами
+- command: adb shell am start -d "safeplant://map?zoneId=123" -n com.safeplant/.MainActivity
+  name: Проверка deep links

@@ -1,0 +1,9 @@
+architecture_hash: a5d9d6ab9741ec2f152694bdadb18bc7d780523e3c42dae355373261c1b3fa6f
+architecture_reviewed: true
+constitution_hash: 652a5803f86bb9219e2cad75d3f701114cb5c85e49e5bb1ce0b9313cdd78c194
+constitution_validated: true
+devplan_confirmed: true
+devplan_hash: 3aa46fcea760c5a50b62ea765a4935dc39056082541e163c71017312d32adb10
+import_mode: manual
+import_source_commit: 7ae2339
+import_timestamp: '2026-04-23T11:16:06.283943+00:00'

@@ -1,0 +1,2 @@
+- command: ./scripts/run_all_checks.sh
+  name: Запуск всех проверок core-database

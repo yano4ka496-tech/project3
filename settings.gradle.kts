@@ -3,6 +3,8 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://api.mapbox.com/downloads/v2/releases/maven") }
     }
 }
 dependencyResolutionManagement {
@@ -21,6 +23,7 @@ include(":core-database")
 include(":core-storage")
 include(":core-security")
 include(":core-mapping")
+include(":core-utils")
 include(":feature-quiz")
 include(":feature-map")
 include(":feature-training")

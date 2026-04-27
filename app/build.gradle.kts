@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id("kotlin-kapt")
+//     id("kotlin-kapt")
 }
 
 android {
@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.activity:activity-compose:1.9.3")
     implementation(project(":core-database"))
     implementation(project(":core-security"))
     implementation(project(":core-navigation"))

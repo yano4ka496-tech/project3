@@ -1,0 +1,34 @@
+{
+  "checklist": [
+    {
+      "id": "test_files_exist",
+      "label": "Test files present",
+      "passed": false,
+      "detail": "No test files found"
+    },
+    {
+      "id": "spec_exists",
+      "label": "Specification filled",
+      "passed": true,
+      "detail": "6484 chars"
+    },
+    {
+      "id": "stages_complete",
+      "label": "All stages implemented",
+      "passed": true,
+      "detail": "10/10 stages"
+    }
+  ],
+  "task_commands": [
+    {
+      "name": "Запуск всех проверок core-database",
+      "command": "./scripts/run_all_checks.sh",
+      "success": true,
+      "exit_code": 0,
+      "stdout": "ocumentation.\n✅ Тесты не найдены (заглушка)\n2. Запуск unit-тестов для репозиториев...\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n✅ Тесты не найдены (заглушка)\n3. Запуск интеграционных тестов для Room...\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n✅ Тесты не найдены (заглушка)\n4. Проверка покрытия тестами...\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n✅ Отчёт не сгенерирован (тесты отсутствуют)\n5. Проверка сборки проекта...\n> Task :core-database:preBuild UP-TO-DATE\n> Task :core-database:preDebugBuild UP-TO-DATE\n> Task :core-database:mergeDebugJniLibFolders UP-TO-DATE\n> Task :core-database:mergeDebugNativeLibs NO-SOURCE\n> Task :core-database:stripDebugDebugSymbols NO-SOURCE\n> Task :core-database:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE\n> Task :core-database:checkKotlinGradlePluginConfigurationErrors SKIPPED\n> Task :core-database:generateDebugResValues UP-TO-DATE\n> Task :core-database:generateDebugResources UP-TO-DATE\n> Task :core-database:packageDebugResources UP-TO-DATE\n> Task :core-database:parseDebugLocalResources UP-TO-DATE\n> Task :core-database:generateDebugRFile UP-TO-DATE\n> Task :core-database:extractDeepLinksForAarDebug UP-TO-DATE\n> Task :core-database:javaPreCompileDebug UP-TO-DATE\n> Task :core-database:mergeDebugShaders UP-TO-DATE\n> Task :core-database:compileDebugShaders NO-SOURCE\n> Task :core-database:generateDebugAssets UP-TO-DATE\n> Task :core-database:packageDebugAssets UP-TO-DATE\n> Task :core-database:prepareDebugArtProfile UP-TO-DATE\n> Task :core-database:prepareLintJarForPublish UP-TO-DATE\n> Task :core-database:processDebugManifest UP-TO-DATE\n> Task :core-database:writeDebugAarMetadata UP-TO-DATE\n> Task :core-database:preReleaseBuild UP-TO-DATE\n> Task :core-database:mergeReleaseJniLibFolders UP-TO-DATE\n> Task :core-database:mergeReleaseNativeLibs NO-SOURCE\n> Task :core-database:stripReleaseDebugSymbols NO-SOURCE\n> Task :core-database:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE\n> Task :core-database:generateReleaseResValues UP-TO-DATE\n> Task :core-database:extractDeepLinksForAarRelease UP-TO-DATE\n> Task :core-database:generateReleaseResources UP-TO-DATE\n> Task :core-database:packageReleaseResources UP-TO-DATE\n> Task :core-database:parseReleaseLocalResources UP-TO-DATE\n> Task :core-database:generateReleaseRFile UP-TO-DATE\n> Task :core-database:javaPreCompileRelease UP-TO-DATE\n> Task :core-database:mergeReleaseShaders UP-TO-DATE\n> Task :core-database:compileReleaseShaders NO-SOURCE\n> Task :core-database:generateReleaseAssets UP-TO-DATE\n> Task :core-database:packageReleaseAssets UP-TO-DATE\n> Task :core-database:prepareReleaseArtProfile UP-TO-DATE\n> Task :core-database:processReleaseManifest UP-TO-DATE\n> Task :core-database:writeReleaseAarMetadata UP-TO-DATE\n> Task :core-database:mapReleaseSourceSetPaths UP-TO-DATE\n> Task :core-database:mergeReleaseResources UP-TO-DATE\n> Task :core-database:verifyReleaseResources UP-TO-DATE\n\n> Task :core-database:compileDebugKotlin FAILED\n\n> Task :core-database:compileReleaseKotlin FAILED\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n34 actionable tasks: 2 executed, 32 up-to-date\n❌ Ошибка сборки\n6. Проверка линтера...\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n✅ Линтер не настроен или ошибки\n🎉 Все проверки выполнены (заглушки для отсутствующих тестов)\n",
+      "stderr": ""
+    }
+  ],
+  "passed": false,
+  "timestamp": "2026-04-28T00:03:28.603348"
+}

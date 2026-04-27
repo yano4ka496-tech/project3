@@ -1,0 +1,11 @@
+- command: ./gradlew test --tests "*DaoTest" --tests "*QRValidatorTest" --tests "*QuizDaoTest"
+    --tests "*DatabaseInitializerTest"
+  name: Unit tests
+- command: ./gradlew connectedAndroidTest
+  name: Integration tests
+- command: ./gradlew assembleDebug
+  name: Build
+- command: ./gradlew detekt
+  name: Detekt
+- command: ./gradlew ktlintCheck
+  name: Ktlint
