@@ -60,27 +60,27 @@
 
 ## Verify
 ```yaml
-- name: Проверка сборки APK
+- command: Проверка сборки APK
   command: ./gradlew assembleDebug
-- name: Запуск unit-тестов
+- command: Запуск unit-тестов
   command: ./gradlew testDebugUnitTest --tests "*Test"
-- name: Проверка покрытия тестами
+- command: Проверка покрытия тестами
   command: ./gradlew jacocoTestReport
-- name: Запуск Detekt
+- command: Запуск Detekt
   command: ./gradlew detekt
-- name: Запуск ktlint
+- command: Запуск ktlint
   command: ./gradlew ktlintCheck
-- name: Проверка QR валидации
+- command: Проверка QR валидации
   command: ./scripts/validate_qr_format.sh
-- name: Проверка root-детекции
+- command: Проверка root-детекции
   command: ./scripts/check_root_detection.sh
-- name: Проверка сброса версии
+- command: Проверка сброса версии
   command: ./scripts/check_version_reset.sh
-- name: Проверка выбора вопросов
+- command: Проверка выбора вопросов
   command: ./scripts/check_quiz_selection.sh
-- name: Проверка шифрования БД
+- command: Проверка шифрования БД
   command: ./scripts/check_database_encryption.sh
-- name: Проверка конвертации PDF
+- command: Проверка конвертации PDF
   command: ./scripts/check_pdf_conversion.sh
 ```
 

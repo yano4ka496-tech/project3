@@ -2,15 +2,25 @@ package com.safeplant.feature.profile
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 
+/**
+ * Экран профиля
+ * @param onNavigateToMap Функция перехода на экран карты
+ * @param onNavigateToQuiz Функция перехода на экран квиза
+ */
 @Composable
-fun ProfileScreen(onNavigateToMap: () -> Unit = {}) {
+fun ProfileScreen(
+    onNavigateToMap: () -> Unit = {},
+    onNavigateToQuiz: () -> Unit = {}
+) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Профиль (заглушка)", fontSize = 24.sp)
+        Button(onClick = onNavigateToMap) {
+            Text("Перейти на карту")
+        }
     }
 }

@@ -6,12 +6,12 @@ import androidx.room.TypeConverters
 import com.safeplant.core.database.Converters
 
 /**
- * Цифровой допуск пользователя
+ * Сущность цифрового допуска
  * @param id Уникальный идентификатор допуска
  * @param userId Идентификатор пользователя
- * @param issuedAt Дата выдачи допуска
- * @param expiryDate Дата истечения срока действия допуска
- * @param isValid Флаг действительности допуска (true - действителен, false - аннулирован)
+ * @param issuedAt Дата выдачи допуска (в миллисекундах)
+ * @param expiryDate Дата истечения срока действия допуска (в миллисекундах)
+ * @param isValid Флаг действительности допуска
  */
 @Entity(tableName = "access_pass")
 @TypeConverters(Converters::class)
@@ -19,7 +19,7 @@ data class AccessPass(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val userId: String,
-    val issuedAt: Date,
-    val expiryDate: Date,
+    val issuedAt: Long,
+    val expiryDate: Long,
     val isValid: Boolean = true
 )

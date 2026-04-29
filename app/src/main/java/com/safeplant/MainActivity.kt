@@ -9,6 +9,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val textView = TextView(this)
         textView.text = "SafePlant работает"
+        textView.textSize = 24f
         setContentView(textView)
     }
 }

@@ -1,34 +1,119 @@
 #!/bin/bash
-echo "Запуск всех проверок для модуля core-database..."
 
-# Проверка 1: Unit-тесты для DAO
-echo "1. Запуск unit-тестов для DAO..."
-./gradlew :core-database:test --tests "*DaoTest" 2>/dev/null || echo "✅ Тесты не найдены (заглушка)"
+# Скрипт для выполнения всех проверок SafePlant
 
-# Проверка 2: Unit-тесты для репозиториев
-echo "2. Запуск unit-тестов для репозиториев..."
-./gradlew :core-database:test --tests "*RepositoryTest" 2>/dev/null || echo "✅ Тесты не найдены (заглушка)"
+echo "=== Запуск всех проверок SafePlant ==="
 
-# Проверка 3: Интеграционные тесты для Room
-echo "3. Запуск интеграционных тестов для Room..."
-./gradlew :core-database:test --tests "*EncryptedDatabaseTest" 2>/dev/null || echo "✅ Тесты не найдены (заглушка)"
-
-# Проверка 4: Проверка покрытия тестами
-echo "4. Проверка покрытия тестами..."
-./gradlew :core-database:jacocoTestReport 2>/dev/null || echo "✅ Отчёт не сгенерирован (тесты отсутствуют)"
-
-# Проверка 5: Проверка сборки проекта
-echo "5. Проверка сборки проекта..."
-./gradlew :core-database:assemble 2>/dev/null
-if [ $? -eq 0 ]; then
-    echo "✅ Сборка успешна"
-else
-    echo "❌ Ошибка сборки"
+# Проверка конвертации PDF в MBTiles
+echo "1. Проверка конвертации PDF в MBTiles"
+python3 scripts/convert_pdf_to_mbtiles.py tests/data/pdf/test.pdf tests/data/mbtiles/test.mbtiles
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Проверка конвертации PDF в MBTiles не пройдена"
+    exit 1
 fi
 
-# Проверка 6: Проверка линтера
-echo "6. Проверка линтера..."
-./gradlew :core-database:detekt 2>/dev/null || echo "✅ Линтер не настроен или ошибки"
+# Валидация MBTiles файла
+echo "2. Валидация MBTiles файла"
+python3 scripts/validate_mbtiles.py tests/data/mbtiles/test.mbtiles
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Валидация MBTiles файла не пройдена"
+    exit 1
+fi
 
-echo "🎉 Все проверки выполнены (заглушки для отсутствующих тестов)"
-exit 0
+# Проверка зависимостей для конвертации
+echo "3. Проверка зависимостей для конвертации"
+bash scripts/check_pdf_conversion.sh
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Проверка зависимостей для конвертации не пройдена"
+    exit 1
+fi
+
+# Unit-тесты для QR-позиционирования
+echo "4. Unit-тесты для QR-позиционирования"
+./gradlew test --tests *QrCodeDaoTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Unit-тесты для QR-позиционирования не пройдены"
+    exit 1
+fi
+
+# Тесты шифрования базы данных
+echo "5. Тесты шифрования базы данных"
+./gradlew test --tests *DatabaseEncryptionTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Тесты шифрования базы данных не пройдены"
+    exit 1
+fi
+
+# Интеграционные тесты
+echo "6. Интеграционные тесты"
+./gradlew connectedAndroidTest --tests *MapScreenTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Интеграционные тесты не пройдены"
+    exit 1
+fi
+
+# Тесты сканирования QR-кодов
+echo "7. Тесты сканирования QR-кодов"
+./gradlew test --tests *QrCodeScanTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Тесты сканирования QR-кодов не пройдены"
+    exit 1
+fi
+
+# Тесты обновления приложения
+echo "8. Тесты обновления приложения"
+./gradlew test --tests *AppUpdateTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Тесты обновления приложения не пройдены"
+    exit 1
+fi
+
+# Тесты обнаружения root-доступа
+echo "9. Тесты обнаружения root-доступа"
+./gradlew test --tests *RootDetectionTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Тесты обнаружения root-доступа не пройдены"
+    exit 1
+fi
+
+# Тесты доступа к квизу
+echo "10. Тесты доступа к квизу"
+./gradlew test --tests *QuizAccessTest
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Тесты доступа к квизу не пройдены"
+    exit 1
+fi
+
+# Проверка линтинга
+echo "11. Проверка линтинга"
+./gradlew ktlintCheck
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Проверка линтинга не пройдена"
+    exit 1
+fi
+
+# Проверка детекта
+echo "12. Проверка детекта"
+./gradlew detekt
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Проверка детекта не пройдена"
+    exit 1
+fi
+
+# Запуск всех тестов
+echo "13. Запуск всех тестов"
+bash scripts/run_all_tests.sh
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Запуск всех тестов не удался"
+    exit 1
+fi
+
+# Финальная проверка
+echo "14. Финальная проверка"
+bash scripts/run_final_checks.sh
+if [ $? -ne 0 ]; then
+    echo "Ошибка: Финальная проверка не пройдена"
+    exit 1
+fi
+
+echo "=== Все проверки пройдены успешно ==="

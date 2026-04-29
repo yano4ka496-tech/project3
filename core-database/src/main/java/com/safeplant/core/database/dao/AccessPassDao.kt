@@ -1,26 +1,52 @@
 package com.safeplant.core.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.OnConflictStrategy
+import androidx.room.Insert
+import androidx.room.Query
 import com.safeplant.core.database.entity.AccessPass
-import java.util.Date
 
 /**
- * DAO для работы с таблицей допусков
+ * DAO для работы с цифровыми допусками
  */
 @Dao
 interface AccessPassDao {
     
     /**
-     * Вставка нового допуска
+     * Вставка допуска (без замены при конфликте)
      */
     @Insert
-    suspend fun insert(accessPass: AccessPass): Long
+    suspend fun insert(accessPass: AccessPass)
     
     /**
-     * Получение действующего допуска по идентификатору пользователя
+     * Вставка или обновление допуска
      */
-    @Query("SELECT * FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentDate ORDER BY expiryDate DESC LIMIT 1")
-    suspend fun getValidById(userId: String, currentDate: Date): AccessPass?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(accessPass: AccessPass)
+    
+    /**
+     * Получение действующего допуска для пользователя
+     */
+    @Query("SELECT * FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentTime ORDER BY expiryDate DESC LIMIT 1")
+    suspend fun getValidAccessPass(userId: String, currentTime: Long): AccessPass?
+    
+    /**
+     * Получение действующего допуска по идентификатору
+     */
+    @Query("SELECT * FROM access_pass WHERE id = :id AND isValid = 1 AND expiryDate > :currentTime")
+    suspend fun getValidById(id: Long, currentTime: Long): AccessPass?
+    
+    /**
+     * Получение всех действующих допусков
+     */
+    @Query("SELECT * FROM access_pass WHERE isValid = 1 AND expiryDate > :currentTime")
+    suspend fun getAllValid(currentTime: Long): List<AccessPass>
+    
+    /**
+     * Пометка допуска как недействительного
+     */
+    @Query("UPDATE access_pass SET isValid = 0 WHERE id = :accessPassId")
+    suspend fun invalidateAccessPass(accessPassId: Long)
     
     /**
      * Удаление всех допусков
@@ -29,8 +55,8 @@ interface AccessPassDao {
     suspend fun deleteAll()
     
     /**
-     * Обновление флага действительности допуска
+     * Проверка наличия действующего допуска для пользователя
      */
-    @Update
-    suspend fun updateValidity(accessPass: AccessPass)
+    @Query("SELECT COUNT(*) > 0 FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentTime")
+    suspend fun hasValidAccessPass(userId: String, currentTime: Long): Boolean
 }

@@ -1,48 +1,36 @@
-# AI_NOTES — Stage 1: Создание сущностей и DAO
+# AI_NOTES — Stage 1: Настройка сущностей и DAO базы данных
 
 ## Что было сделано
-- Созданы все требуемые сущности базы данных: AccessPass, QuizResult, TrainingVideo, QrCodeMapping
-- Реализованы интерфейсы DAO для каждой сущности с необходимыми методами
-- Обновлен AppDatabase для включения новых сущностей и установлена версия базы данных на 3
-- Добавлены аннотации @TypeConverters для преобразования Date в Long и обратно
-- Реализованы все CRUD-операции для каждой сущности согласно требованиям
+- Модифицирован интерфейс AccessPassDao, добавлены методы:
+  - `insert(accessPass: AccessPass)` - для вставки допуска без замены при конфликте
+  - `getValidById(id: Long, currentTime: Long)` - для получения действующего допуска по идентификатору
+- Проверены все сущности (AccessPass, QuizResult, TrainingVideo, QrCodeMapping) - они соответствуют требованиям
+- Проверены все DAO (QuizResultDao, TrainingVideoDao, QrCodeDao) - они соответствуют требованиям
+- В AccessPassDao оставлены дополнительные методы (insertOrUpdate, getValidAccessPass и др.) для совместимости с существующим кодом
 
 ## Почему такой подход
-- Следование паттерну MVVM и Clean Architecture
-- Использование Room с аннотациями для автоматической генерации кода доступа к данным
-- Разделение ответственности между сущностями и DAO
-- Использование suspend функций для асинхронной работы с базой данных
-- Добавление индексов для оптимизации запросов (в QrCodeDao)
+- Спецификация требует методы `insert` и `getValidById` для AccessPassDao, которые отсутствовали в текущей реализации
+- Метод `insert` добавлен без замены при конфликте, чтобы соответствовать спецификации
+- Метод `getValidById` добавлен для получения действующего допуска по идентификатору с проверкой срока действия
+- Остальные методы оставлены для совместимости с существующим кодом
 
-## Файлы созданы / изменены
+## Файлы, созданные/измененные
 | Файл | Действие | Описание |
 |---|---|---|
-| `core-database/src/main/java/com/safeplant/core/database/entity/AccessPass.kt` | Создан | Сущность для хранения цифровых допусков |
-| `core-database/src/main/java/com/safeplant/core/database/entity/QuizResult.kt` | Создан | Сущность для хранения результатов прохождения квиза |
-| `core-database/src/main/java/com/safeplant/core/database/entity/TrainingVideo.kt` | Создан | Сущность для хранения информации об обучающих видео |
-| `core-database/src/main/java/com/safeplant/core/database/entity/QrCodeMapping.kt` | Создан | Сущность для сопоставления QR-кодов с координатами |
-| `core-database/src/main/java/com/safeplant/core/database/dao/AccessPassDao.kt` | Создан | DAO для работы с таблицей допусков |
-| `core-database/src/main/java/com/safeplant/core/database/dao/QuizResultDao.kt` | Создан | DAO для работы с таблицей результатов квиза |
-| `core-database/src/main/java/com/safeplant/core/database/dao/TrainingVideoDao.kt` | Создан | DAO для работы с таблицей обучающих видео |
-| `core-database/src/main/java/com/safeplant/core/database/dao/QrCodeDao.kt` | Создан | DAO для работы с таблицей сопоставлений QR-кодов |
-| `core-database/src/main/java/com/safeplant/core/database/AppDatabase.kt` | Обновлен | Добавлены новые сущности и установлена версия 3 |
+| `core-database/src/main/java/com/safeplant/core/database/dao/AccessPassDao.kt` | изменен | Добавлены методы insert и getValidById |
 
 ## Риски и ограничения
-- Не реализована шифрование базы данных (будет в Stage 2)
-- Не добавлена обработка ошибок при работе с базой данных
-- Не реализована бизнес-логика для проверки сроков действия допусков (будет в Stage 3)
-- Не добавлены миграции баз данных (будет в Stage 4)
+- Добавление метода `insert` без замены может привести к дублированию записей, если вставлять допуск с тем же userId, но это соответствует спецификации
+- Метод `getValidById` требует передачи текущего времени, что может быть неудобно, но необходимо для проверки срока действия
 
 ## Соответствие инвариантам
-- [ ] Модульный монолит с MVVM — соблюдается
-- [ ] Clean Architecture — соблюдается
-- [ ] Offline-first — соблюдается
-- [ ] Без сетевых зависимостей — соблюдается
-- [ ] Шифрование данных через Android Keystore — будет реализовано в Stage 2
-- [ ] Максимальная длина функции 40 строк — соблюдается
-- [ ] Максимальная глубина вложенности 4 уровня — соблюдается
+- [ ] Модульная структура - соблюдается
+- [ ] Офлайн-первичность - соблюдается
+- [ ] Шифрование через Android Keystore - будет реализовано на следующем этапе
+- [ ] Максимальная длина функции - соблюдается (все методы короткие)
+- [ ] Максимальная глубина вложенности - соблюдается
 
 ## Как проверить
-1. Проверить сборку проекта: `./gradlew :core-database:build`
-2. Запустить unit-тесты для DAO: `./gradlew :core-database:test --tests "*DaoTest"`
-3. Проверить линтер: `./gradlew :core-database:detekt`
+1. Скомпилировать проект: `./gradlew :core-database:assemble`
+2. Запустить unit-тесты для DAO: `./gradlew :core-database:testDebugUnitTest --tests "*AccessPassDaoTest"`
+3. Проверить, что все методы DAO работают корректно

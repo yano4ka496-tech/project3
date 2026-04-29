@@ -1,2 +1,12 @@
-- command: ./scripts/run_all_checks.sh
-  name: Запуск всех проверок core-database
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*DaoTest"
+  name: Unit-тесты для DAO
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*RepositoryTest"
+  name: Unit-тесты для репозиториев
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*EncryptedDatabaseTest"
+  name: Интеграционные тесты для Room
+- command: ./gradlew :core-database:jacocoTestReport
+  name: Проверка покрытия тестами
+- command: ./gradlew :core-database:assemble
+  name: Проверка сборки проекта
+- command: ./gradlew :core-database:detekt
+  name: Проверка линтера

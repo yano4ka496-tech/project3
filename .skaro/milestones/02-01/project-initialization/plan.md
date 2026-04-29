@@ -141,16 +141,16 @@
 
 ## Verify
 ```yaml
-- name: Проверка сборки проекта
+- command: Проверка сборки проекта
   command: ./gradlew build
-- name: Запуск unit-тестов
+- command: Запуск unit-тестов
   command: ./gradlew test
-- name: Проверка покрытия тестами
+- command: Проверка покрытия тестами
   command: ./gradlew jacocoTestReport
-- name: Запуск линтеров
+- command: Запуск линтеров
   command: ./gradlew ktlintCheck detekt
-- name: Проверка копирования assets
+- command: Проверка копирования assets
   command: ls -la app/src/main/assets/
-- name: Проверка работы приложения
+- command: Проверка работы приложения
   command: adb shell am start -n com.safeplant/.MainActivity
 ```

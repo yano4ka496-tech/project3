@@ -1,16 +1,21 @@
 package com.safeplant.core.database
 
 import androidx.room.TypeConverter
-import java.util.Date
 
+/**
+ * Конвертеры для Room для преобразования типов данных
+ */
 class Converters {
+    
+    /**
+     * Конвертер Long в Long (для совместимости с Date)
+     */
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
-    }
-
+    fun fromTimestamp(value: Long?): Long? = value
+    
+    /**
+     * Конвертер Long в Long (для совместимости с Date)
+     */
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
-    }
+    fun dateToTimestamp(date: Long?): Long? = date
 }

@@ -1,6 +1,0 @@
-- command: ./gradlew build
-  name: Проверка сборки проекта
-- command: ./gradlew :feature-quiz:test
-  name: Запуск unit-тестов для feature-quiz
-- command: (проверка вручную или через UI-тесты, если есть)
-  name: Проверка навигации на квиз

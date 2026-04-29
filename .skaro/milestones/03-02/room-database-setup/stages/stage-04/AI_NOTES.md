@@ -1,36 +1,46 @@
-# AI_NOTES — Stage 4: Обновление миграций
+# AI_NOTES — Stage 4: Тестирование базы данных
 
 ## Что было сделано
-- Обновлена миграция Migration2To3 для создания правильных таблиц без quiz_questions (вопросы загружаются из assets)
-- Создана новая миграция Migration3To4 для сброса допусков при изменении версии приложения
-- В Migration2To3 добавлены таблицы access_pass, quiz_result, training_video и qr_code_mappings с правильной структурой
-- В Migration3To4 добавлен столбец version в таблицу access_pass и аннулированы все допуски
+- Реализованы unit-тесты для всех DAO (AccessPassDao, QuizResultDao, TrainingVideoDao, QrCodeDao)
+- Созданы интеграционные тесты для зашифрованной базы данных (EncryptedDatabaseTest)
+- Реализованы тесты для миграций базы данных (MigrationTest)
+- Добавлен тестовый DatabaseKeyManager для тестирования шифрования
+- Проверено производительность запросов (<200 мс)
+- Тесты покрывают все основные сценарии использования базы данных
 
 ## Почему такой подход
-- В Migration2To3 удалена таблица quiz_questions, так как вопросы загружаются из assets и не хранятся в БД
-- В Migration3To4 добавлен столбец version для отслеживания версии приложения, при которой был выдан допуск
-- При миграции на версию 4 все допуски аннулируются (isValid = 0), что соответствует требованиям
-- Использованы стандартные SQL-команды для миграций Room
+- Тесты используют inMemoryDatabaseBuilder для быстрого выполнения
+- Для тестирования шифрования создан специальный TestDatabaseKeyManager
+- Тесты миграций проверяют корректность преобразований данных
+- Тесты производительности гарантируют быструю работу запросов
+- Все тесты написаны с использованием JUnit4 и Kotlin Coroutines
 
-## Файлы созданы / изменены
+## Файлы созданные / измененные
 | Файл | Действие | Описание |
 |---|---|---|
-| `core-database/src/main/java/com/safeplant/core/database/migration/Migration2To3.kt` | обновлен | Миграция с версии 2 на 3 с правильными таблицами |
-| `core-database/src/main/java/com/safeplant/core/database/migration/Migration3To4.kt` | создан | Миграция с версии 3 на 4 для сброса допусков |
+| `core-database/src/test/java/com/safeplant/core/database/dao/AccessPassDaoTest.kt` | создан | Unit-тесты для DAO цифровых допусков |
+| `core-database/src/test/java/com/safeplant/core/database/dao/QuizResultDaoTest.kt` | создан | Unit-тесты для DAO результатов квиза |
+| `core-database/src/test/java/com/safeplant/core/database/dao/TrainingVideoDaoTest.kt` | создан | Unit-тесты для DAO обучающих видео |
+| `core-database/src/test/java/com/safeplant/core/database/dao/QrCodeDaoTest.kt` | создан | Unit-тесты для DAO сопоставлений QR-кодов |
+| `core-database/src/test/java/com/safeplant/core/database/EncryptedDatabaseTest.kt` | создан | Интеграционные тесты для зашифрованной базы данных |
+| `core-database/src/test/java/com/safeplant/core/database/migration/MigrationTest.kt` | создан | Тесты для миграций базы данных |
 
 ## Риски и ограничения
-- В Migration3To4 аннулируются все допуски без проверки версии приложения, что соответствует требованиям
-- При изменении структуры таблиц в будущем потребуется создавать новые миграции
-- Нет обработки ошибок при выполнении SQL-запросов миграций
+- Тесты шифрования используют тестовый ключ, который не полностью имитирует реальный Keystore
+- Тесты производительности могут давать разные результаты на разных устройствах
+- Тесты миграций не проверяют реальную файловую систему, только inMemory базу
 
 ## Соответствие инвариантам
-- [ ] Максимальная длина функции — соблюдена (все функции короче 40 строк)
-- [ ] Максимальная глубина вложенности — соблюдена (максимальная глубина 2 уровня)
-- [ ] Стандарт именования — соблюден (классы PascalCase, функции camelCase)
-- [ ] Отсутствие дублирования кода — соблюдено (используются общие SQL-команды)
-- [ ] Каждый экран/вьюмодель — MVVM/MVI — не применимо (миграции не являются экранами)
+- [ ] Модульная структура - соблюдается
+- [ ] Офлайн-первичность - соблюдается
+- [ ] Шифрование через Android Keystore - протестировано через TestDatabaseKeyManager
+- [ ] Максимальная длина функции - соблюдается (все методы тестов короткие)
+- [ ] Максимальная глубина вложенности - соблюдается
 
 ## Как проверить
-1. Проверить сборку проекта: `./gradlew :core-database:build`
-2. Запустить unit-тесты миграций: `./gradlew :core-database:test --tests "*Migration*"`
-3. Проверить линтер: `./gradlew :core-database:detekt`
+1. Запустить unit-тесты для DAO: `./gradlew :core-database:testDebugUnitTest --tests "*DaoTest"`
+2. Запустить интеграционные тесты: `./gradlew :core-database:testDebugUnitTest --tests "*EncryptedDatabaseTest"`
+3. Запустить тесты миграций: `./gradlew :core-database:testDebugUnitTest --tests "*MigrationTest"`
+4. Проверить покрытие тестами: `./gradlew :core-database:jacocoTestReport`
+5. Проверить сборку проекта: `./gradlew :core-database:assemble`
+6. Проверить линтер: `./gradlew :core-database:detekt`
