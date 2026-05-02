@@ -18,5 +18,5 @@ data class QrCodeMapping(
     val objectId: String,
     val name: String,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
 )

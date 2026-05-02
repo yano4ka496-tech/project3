@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
  * @param onNavigateToQuiz Функция перехода на экран квиза
  */
 @Composable
-fun ProfileScreen(
+fun profileScreen(
     onNavigateToMap: () -> Unit = {},
-    onNavigateToQuiz: () -> Unit = {}
+    onNavigateToQuiz: () -> Unit = {},
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Button(onClick = onNavigateToMap) {

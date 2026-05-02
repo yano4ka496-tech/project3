@@ -11,5 +11,5 @@ data class MapObject(
     val latitude: Double,
     val longitude: Double,
     val description: String? = null,
-    val category: String? = null
+    val category: String? = null,
 )

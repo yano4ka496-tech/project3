@@ -19,7 +19,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -52,4 +52,3 @@ dependencies {
     testImplementation("androidx.security:security-crypto:1.1.0-alpha06")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 }
-

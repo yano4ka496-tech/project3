@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
  * ViewModel для экрана профиля (упрощённая версия для компиляции)
  */
 class ProfileViewModel : ViewModel() {
-
     private val _uiState = MutableStateFlow<UiState>(UiState.Loaded)
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
@@ -24,15 +23,19 @@ class ProfileViewModel : ViewModel() {
 
     sealed class UiState {
         object Loading : UiState()
+
         object Loaded : UiState()
+
         object NoAccessPass : UiState()
+
         data class Error(val message: String) : UiState()
+
         object RootWarning : UiState()
     }
 
     data class AccessPassUi(
         val expiryDate: Long,
-        val isValid: Boolean
+        val isValid: Boolean,
     )
 
     fun loadProfile() {
@@ -56,6 +59,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun isAccessAllowed(): Boolean = true
+
     fun isAccessToDangerousZonesAllowed(): Boolean = true
 
     fun calculateRemainingTime(accessPass: AccessPassUi): Long {

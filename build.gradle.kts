@@ -7,3 +7,15 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
 }
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        version.set("1.0.1")
+        android.set(true)
+        outputToConsole.set(true)
+        ignoreFailures.set(false)
+        verbose.set(true)
+    }
+}

@@ -1,0 +1,12 @@
+- command: ./gradlew test --tests "*MapRendererTest*"
+  name: Unit tests
+- command: ./gradlew test --tests "*MapViewModelTest*"
+  name: Unit tests
+- command: ./gradlew connectedAndroidTest --tests "*MapScreen*"
+  name: Интеграционные тесты
+- command: ./gradlew connectedAndroidTest --tests "*MapPerformanceTest*"
+  name: Проверка производительности
+- command: ./gradlew lint
+  name: Lint
+- command: ./gradlew detekt
+  name: Detekt

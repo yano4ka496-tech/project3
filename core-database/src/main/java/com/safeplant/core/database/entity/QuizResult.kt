@@ -13,5 +13,5 @@ data class QuizResult(
     val userId: String,
     val score: Int,
     val passed: Boolean,
-    val timestamp: Long
+    val timestamp: Long,
 )

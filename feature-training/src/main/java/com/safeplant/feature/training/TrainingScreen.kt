@@ -13,9 +13,7 @@ import androidx.compose.ui.Modifier
  * @param onNavigateToMap Функция перехода на экран карты
  */
 @Composable
-fun TrainingScreen(
-    onNavigateToMap: () -> Unit = {}
-) {
+fun trainingScreen(onNavigateToMap: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Button(onClick = onNavigateToMap) {
             Text("Вернуться на карту")

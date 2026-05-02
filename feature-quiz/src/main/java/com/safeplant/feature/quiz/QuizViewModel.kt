@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class QuizViewModel : ViewModel() {
-
     private val _uiState = MutableStateFlow<QuizUiState>(QuizUiState.Loading)
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
@@ -14,7 +13,10 @@ class QuizViewModel : ViewModel() {
         _uiState.value = QuizUiState.Questions(emptyList(), 0)
     }
 
-    fun answerSelected(questionIndex: Int, answerIndex: Int) {
+    fun answerSelected(
+        questionIndex: Int,
+        answerIndex: Int,
+    ) {
         // ничего не делаем, заглушка
     }
 
@@ -25,7 +27,9 @@ class QuizViewModel : ViewModel() {
 
 sealed class QuizUiState {
     object Loading : QuizUiState()
+
     data class Questions(val questions: List<QuizQuestion>, val currentIndex: Int) : QuizUiState()
+
     data class Result(val score: Int, val passed: Boolean) : QuizUiState()
 }
 
@@ -33,5 +37,5 @@ data class QuizQuestion(
     val id: String,
     val text: String,
     val options: List<String>,
-    val correctAnswerIndex: Int
+    val correctAnswerIndex: Int,
 )

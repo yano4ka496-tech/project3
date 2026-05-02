@@ -22,7 +22,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -43,24 +43,24 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.11.00"))
     implementation(project(":core-database"))
     implementation(project(":core-security"))
-    
+
     // Core Android
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    
+
     // Jetpack Compose
-    
+
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.1")
-    
+
     // Security
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    
+
     // Hilt
-    
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
-    
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")

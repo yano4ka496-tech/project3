@@ -44,7 +44,7 @@
   name: Тесты позиционирования QR по objectId
 - command: ./gradlew test --tests *DatabaseEncryptionTest
   name: Тесты шифрования базы данных (Keystore + SQLCipher)
-- command: ./gradlew connectedAndroidTest --tests *MapScreenTest
+- command: ./gradlew connectedAndroidTest
   name: Интеграционные тесты
 - command: ./gradlew test --tests *QrCodeScanTest
   name: Тесты сканирования QR-кодов (валидация формата и обработка ошибок)

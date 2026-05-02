@@ -8,7 +8,7 @@
   name: Unit-тесты для QR-позиционирования
 - command: ./gradlew :core-database:testDebugUnitTest --tests "*DatabaseEncryptionTest"
   name: Тесты шифрования базы данных
-- command: ./gradlew connectedAndroidTest --tests "*MapScreenTest"
+- command: ./gradlew connectedAndroidTest
   name: Интеграционные тесты
 - command: ./gradlew :core-database:testDebugUnitTest --tests "*QrCodeScanTest"
   name: Тесты сканирования QR-кодов

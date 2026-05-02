@@ -16,5 +16,5 @@ data class TrainingVideo(
     val id: Long = 0,
     val title: String,
     val fileName: String,
-    val duration: Int
+    val duration: Int,
 )

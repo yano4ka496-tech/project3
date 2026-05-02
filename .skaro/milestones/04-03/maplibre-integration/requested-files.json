@@ -1,0 +1,22 @@
+[
+  "app/src/main/java/com/safeplant/MainActivity.kt",
+  "feature-map/build.gradle.kts",
+  "feature-map/src/main/AndroidManifest.xml",
+  "feature-map/src/main/java/com/safeplant/feature/map/MapScreen.kt",
+  "core-mapping/build.gradle.kts",
+  "core-mapping/src/main/AndroidManifest.xml",
+  "core-mapping/src/main/java/com/safeplant/core/mapping/MapRenderer.kt",
+  "core-database/build.gradle.kts",
+  "core-database/src/main/java/com/safeplant/core/database/entity/AccessPass.kt",
+  "core-database/src/main/java/com/safeplant/core/database/dao/AccessPassDao.kt",
+  "core-security/build.gradle.kts",
+  "core-security/src/main/java/com/safeplant/core/security/QRValidator.kt",
+  "app/src/main/assets/geojson/routes.geojson",
+  "app/src/main/assets/geojson/hazards.geojson",
+  "app/src/main/assets/geojson/evacuation.geojson",
+  "app/src/main/assets/geojson/ppe_points.geojson",
+  "build.gradle.kts",
+  "gradle.properties",
+  "settings.gradle.kts",
+  "core-security/src/main/java/com/safeplant/core/security/RootDetector.kt"
+]

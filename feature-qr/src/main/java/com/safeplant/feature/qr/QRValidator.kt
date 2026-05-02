@@ -6,7 +6,6 @@ package com.safeplant.feature.qr
  * name: буквы (любого алфавита), цифры, пробелы, дефис, подчёркивание, точка; длина 1–50
  */
 class QRValidator {
-
     private val objectIdRegex = Regex("^[A-Za-z0-9]{1,20}$")
     private val nameRegex = Regex("^[\\p{L}\\p{N}\\s\\-_.]{1,50}$")
 

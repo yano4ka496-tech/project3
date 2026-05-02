@@ -5,15 +5,15 @@ import androidx.room.PrimaryKey
 
 /**
  * Сущность для хранения вопросов квиза
- * @property id Уникальный идентификатор вопроса
+ * @property id Уникальный идентификатор
  * @property text Текст вопроса
- * @property options Список вариантов ответа (JSON строка)
- * @property correctAnswerIndex Индекс правильного ответа в списке options
+ * @property options Варианты ответов (JSON)
+ * @property correctAnswerIndex Индекс правильного ответа
  */
 @Entity(tableName = "quiz_questions")
 data class QuizQuestion(
     @PrimaryKey val id: String,
     val text: String,
-    val options: String, // Храним как JSON строку для простоты
-    val correctAnswerIndex: Int
+    val options: String,
+    val correctAnswerIndex: Int,
 )

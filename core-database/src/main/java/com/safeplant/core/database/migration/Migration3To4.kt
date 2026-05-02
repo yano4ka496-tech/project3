@@ -14,7 +14,7 @@ class Migration3To4 : Migration(3, 4) {
             """
             CREATE INDEX IF NOT EXISTS index_qr_code_coordinates 
             ON qr_code_mappings (latitude, longitude)
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

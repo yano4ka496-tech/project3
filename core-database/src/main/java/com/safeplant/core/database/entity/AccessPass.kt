@@ -21,5 +21,5 @@ data class AccessPass(
     val userId: String,
     val issuedAt: Long,
     val expiryDate: Long,
-    val isValid: Boolean = true
+    val isValid: Boolean = true,
 )

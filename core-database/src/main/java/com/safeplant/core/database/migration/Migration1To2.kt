@@ -18,7 +18,7 @@ class Migration1To2 : Migration(1, 2) {
                 fileName TEXT NOT NULL,
                 duration INTEGER NOT NULL
             )
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

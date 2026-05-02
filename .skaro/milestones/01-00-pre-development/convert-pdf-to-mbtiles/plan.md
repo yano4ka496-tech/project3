@@ -123,7 +123,7 @@
 - name: Тесты шифрования базы данных
   command: ./gradlew test --tests *DatabaseEncryptionTest
 - name: Интеграционные тесты
-  command: ./gradlew connectedAndroidTest --tests *MapScreenTest
+  command: ./gradlew connectedAndroidTest
 - name: Тесты сканирования QR-кодов
   command: ./gradlew test --tests *QrCodeScanTest
 - name: Тесты обновления приложения

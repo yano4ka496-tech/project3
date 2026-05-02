@@ -9,7 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MapScreen(lat: Double = 0.0, lon: Double = 0.0, onNavigateToQuiz: () -> Unit = {}, onNavigateToTraining: () -> Unit = {}, onNavigateToProfile: () -> Unit = {}) {
+fun mapScreen(
+    lat: Double = 0.0,
+    lon: Double = 0.0,
+    onNavigateToQuiz: () -> Unit = {},
+    onNavigateToTraining: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
+) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "Карта (заглушка)", fontSize = 24.sp)
     }

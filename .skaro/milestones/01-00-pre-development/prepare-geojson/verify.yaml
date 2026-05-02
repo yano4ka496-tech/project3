@@ -1,0 +1,9 @@
+- name: Валидация GeoJSON файлов
+  command: python3 -c "import json; [json.load(open(f'app/src/main/assets/geojson/{f}')) for f in ['hazards.geojson', 'routes.geojson', 'ppe_points.geojson', 'evacuation.geojson']] && echo 'GeoJSON files are valid'"
+- name: Проверка выполнения скрипта подготовки ресурсов
+  command: bash scripts/prepare_assets.sh && echo "Prepare assets script executed successfully"
+- name: Проверка наличия файлов в assets
+  command: ls -R app/src/main/assets/geojson/
+- name: Проверка структуры GeoJSON файлов
+  command: python3 -c "import json; [print(f'{f}: {len(json.load(open(f\"app/src/main/assets/geojson/{f}.geojson\"))[\"features\"])} objects') for f in ['hazards', 'routes', 'ppe_points', 'evacuation']]"
+
