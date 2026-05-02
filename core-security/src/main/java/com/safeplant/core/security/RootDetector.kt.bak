@@ -1,0 +1,196 @@
+package com.safeplant.core.security
+
+import android.content.Context
+import android.os.Build
+import com.scottyab.rootbeer.RootBeer
+
+/**
+ * Детектор root-доступа на устройстве
+ */
+class RootDetector(private val context: Context) {
+    
+    /**
+     * Проверяет наличие root-доступа на устройстве
+     * @return true, если root-доступ обнаружен, иначе false
+     */
+    fun isRooted(): Boolean {
+        val rootBeer = RootBeer(context)
+        
+        // Проверка через RootBeer
+        if (rootBeer.isRooted) {
+            return true
+        }
+        
+        // Дополнительные проверки для надежности
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            val paths = arrayOf(
+                "/system/app/Superuser.apk",
+                "/sbin/su",
+                "/system/bin/su",
+                "/system/xbin/su",
+                "/data/local/xbin/su",
+                "/data/local/bin/su",
+                "/system/sd/xbin/su",
+                "/system/bin/failsafe/su",
+                "/data/local/su",
+                "/su/bin/su"
+            )
+            
+            for (path in paths) {
+                val file = java.io.File(path)
+                if (file.exists()) {
+                    return true
+                }
+            }
+        }
+        
+        // Проверка на наличие бинарных файлов su в PATH
+        val path = System.getenv("PATH")
+        if (path != null) {
+            val pathDirs = path.split(":")
+            for (dir in pathDirs) {
+                val suFile = java.io.File(dir, "su")
+                if (suFile.exists() && suFile.canExecute()) {
+                    return true
+                }
+            }
+        }
+        
+        // Проверка на наличие приложений с root-правами
+        val suspiciousApps = arrayOf(
+            "com.noshufou.android.su",
+            "com.thirdparty.superuser",
+            "eu.chainfire.supersu",
+            "com.koushikdutta.superuser",
+            "com.zachspong.temprootremovejb",
+            "com.ramdroid.appquarantine",
+            "com.topjohnwu.magisk"
+        )
+        
+        val pm = context.packageManager
+        for (app in suspiciousApps) {
+            try {
+                pm.getPackageInfo(app, 0)
+                return true
+            } catch (e: Exception) {
+                // Приложение не установлено, продолжаем проверку
+            }
+        }
+        
+        return false
+    }
+    
+    /**
+     * Показывает предупреждающий диалог при обнаружении root
+     * @return true, если root обнаружен, иначе false
+     */
+    fun showRootWarningDialog(): Boolean {
+        return isRooted()
+    }
+}
+--- END FILE -----
+
+--- FILE: feature-profile/src/main/java/com/safeplant/feature/profile/ProfileScreen.kt ---
+package com.safeplant.feature.profile
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+/**
+ * Экран профиля
+ * @param viewModel ViewModel для управления состоянием профиля
+ * @param onNavigateToMap Функция перехода на экран карты
+ * @param onNavigateToQuiz Функция перехода на экран квиза
+ */
+@Composable
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    onNavigateToMap: () -> Unit = {},
+    onNavigateToQuiz: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val isRootDetected by viewModel.isRootDetected.collectAsState()
+    
+    // Показ диалога при обнаружении root
+    LaunchedEffect(isRootDetected) {
+        if (isRootDetected) {
+            viewModel.showRootWarning()
+        }
+    }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Основной контент экрана
+        when (val state = uiState) {
+            is ProfileViewModel.UiState.Loading -> {
+                Text("Загрузка профиля...")
+            }
+            is ProfileViewModel.UiState.Loaded -> {
+                Text("Добро пожаловать, ${state.accessPass.userId}")
+                Text("Допуск действителен до: ${state.accessPass.expiryDate}")
+                
+                // Кнопки навигации, если root не обнаружен
+                if (!isRootDetected) {
+                    Button(
+                        onClick = onNavigateToMap,
+                        modifier = Modifier.padding(top = 16.dp)
+                    ) {
+                        Text("Перейти на карту")
+                    }
+                    
+                    Button(
+                        onClick = onNavigateToQuiz,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text("Пройти квиз")
+                    }
+                } else {
+                    Text(
+                        text = "Доступ к функциям ограничен из-за обнаружения root",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+            }
+            is ProfileViewModel.UiState.NoAccessPass -> {
+                Text("У вас нет действующего допуска")
+            }
+            is ProfileViewModel.UiState.Error -> {
+                Text("Ошибка: ${state.message}")
+            }
+        }
+    }
+    
+    // Диалог предупреждения о root
+    if (uiState is ProfileViewModel.UiState.RootWarning) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideRootWarning() },
+            title = { Text("Предупреждение безопасности") },
+            text = { Text("Обнаружен root-доступ на устройстве. Это может представлять угрозу безопасности. Доступ к некоторым функциям ограничен.") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.hideRootWarning() }) {
+                    Text("Понятно")
+                }
+            }
+        )
+    }
+}

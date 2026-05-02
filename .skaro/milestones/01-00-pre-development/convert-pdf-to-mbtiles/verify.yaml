@@ -1,28 +1,28 @@
-- command: 'name: Проверка конвертации PDF в MBTiles'
-  name: 'name:'
-- command: 'name: Валидация MBTiles файла'
-  name: 'name:'
-- command: 'name: Проверка зависимостей для конвертации'
-  name: 'name:'
-- command: 'name: Unit-тесты для QR-позиционирования'
-  name: 'name:'
-- command: 'name: Тесты шифрования базы данных'
-  name: 'name:'
-- command: 'name: Интеграционные тесты'
-  name: 'name:'
-- command: 'name: Тесты сканирования QR-кодов'
-  name: 'name:'
-- command: 'name: Тесты обновления приложения'
-  name: 'name:'
-- command: 'name: Тесты обнаружения root-доступа'
-  name: 'name:'
-- command: 'name: Тесты доступа к квизу'
-  name: 'name:'
-- command: 'name: Проверка линтинга'
-  name: 'name:'
-- command: 'name: Проверка детекта'
-  name: 'name:'
-- command: 'name: Запуск всех тестов'
-  name: 'name:'
-- command: 'name: Финальная проверка'
-  name: 'name:'
+- command: bash scripts/check_pdf_conversion.sh
+  name: Проверка зависимостей для конвертации
+- command: python3 scripts/convert_pdf_to_mbtiles.py tests/data/pdf/test.pdf tests/data/mbtiles/test.mbtiles
+  name: Конвертация тестового PDF
+- command: python3 scripts/validate_mbtiles.py tests/data/mbtiles/test.mbtiles
+  name: Валидация MBTiles файла
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*QrCodeDaoTest"
+  name: Unit-тесты для QR-позиционирования
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*DatabaseEncryptionTest"
+  name: Тесты шифрования базы данных
+- command: ./gradlew connectedAndroidTest --tests "*MapScreenTest"
+  name: Интеграционные тесты
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*QrCodeScanTest"
+  name: Тесты сканирования QR-кодов
+- command: ./gradlew :app:testDebugUnitTest --tests "*AppUpdateTest"
+  name: Тесты обновления приложения
+- command: ./gradlew :core-security:testDebugUnitTest --tests "*RootDetectionTest"
+  name: Тесты обнаружения root-доступа
+- command: ./gradlew :feature-quiz:testDebugUnitTest --tests "*QuizAccessTest"
+  name: Тесты доступа к квизу
+- command: ./gradlew ktlintCheck
+  name: Проверка линтинга
+- command: ./gradlew detekt
+  name: Проверка детекта
+- command: bash scripts/run_all_tests.sh
+  name: Запуск всех тестов
+- command: bash scripts/run_final_checks.sh
+  name: Финальная проверка

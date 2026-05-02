@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -32,7 +33,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        compose = true
+        // compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -40,7 +41,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-navigation"))
+    // implementation(project(":core-navigation"))
     implementation(project(":core-database"))
     implementation(project(":core-security"))
     

@@ -10,7 +10,7 @@
       "id": "spec_exists",
       "label": "Specification filled",
       "passed": true,
-      "detail": "3801 chars"
+      "detail": "5185 chars"
     },
     {
       "id": "stages_complete",
@@ -21,118 +21,118 @@
   ],
   "task_commands": [
     {
-      "name": "name:",
-      "command": "name: Проверка конвертации PDF в MBTiles",
+      "name": "Проверка зависимостей для конвертации",
+      "command": "bash scripts/check_pdf_conversion.sh",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "Проверка конвертации PDF в MBTiles...\n✒ ogr2ogr доступен\n✒ tippecanoe доступен\n✒ sqlite3 доступен\n✒ Тестовый PDF найден: tests/data/pdf/test.pdf\nКонвертация tests/data/pdf/test.pdf в /tmp/tmp.uJtStNmW3A.mbtiles\n✓ Все зависимости установлены\nПолучение списка слоев из tests/data/pdf/test.pdf...\n✗ Конвертация PDF в MBtiles не удалась\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 257, in <module>\n    main()\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 254, in main\n    convert_pdf_to_mbtiles(args.pdf_path, args.output_path, not args.no_validate)\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 205, in convert_pdf_to_mbtiles\n    layers = get_pdf_layers(pdf_path)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 39, in get_pdf_layers\n    raise Exception(f\"Ошибка при получении информации о слоях: {result.stderr}\")\nException: Ошибка при получении информации о слоях: ogrinfo failed - unable to open 'tests/data/pdf/test.pdf'.\n\n"
     },
     {
-      "name": "name:",
-      "command": "name: Валидация MBTiles файла",
+      "name": "Конвертация тестового PDF",
+      "command": "python3 scripts/convert_pdf_to_mbtiles.py tests/data/pdf/test.pdf tests/data/mbtiles/test.mbtiles",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "Конвертация tests/data/pdf/test.pdf в tests/data/mbtiles/test.mbtiles\n✓ Все зависимости установлены\nПолучение списка слоев из tests/data/pdf/test.pdf...\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 257, in <module>\n    main()\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 254, in main\n    convert_pdf_to_mbtiles(args.pdf_path, args.output_path, not args.no_validate)\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 205, in convert_pdf_to_mbtiles\n    layers = get_pdf_layers(pdf_path)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 39, in get_pdf_layers\n    raise Exception(f\"Ошибка при получении информации о слоях: {result.stderr}\")\nException: Ошибка при получении информации о слоях: ogrinfo failed - unable to open 'tests/data/pdf/test.pdf'.\n\n"
     },
     {
-      "name": "name:",
-      "command": "name: Проверка зависимостей для конвертации",
+      "name": "Валидация MBTiles файла",
+      "command": "python3 scripts/validate_mbtiles.py tests/data/mbtiles/test.mbtiles",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "Валидация MBTiles файла: tests/data/mbtiles/test.mbtiles\n✗ Валидация не пройдена: MBTiles файл не найден: tests/data/mbtiles/test.mbtiles\n",
+      "stderr": ""
     },
     {
-      "name": "name:",
-      "command": "name: Unit-тесты для QR-позиционирования",
+      "name": "Unit-тесты для QR-позиционирования",
+      "command": "./gradlew :core-database:testDebugUnitTest --tests \"*QrCodeDaoTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 7s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Тесты шифрования базы данных",
+      "name": "Тесты шифрования базы данных",
+      "command": "./gradlew :core-database:testDebugUnitTest --tests \"*DatabaseEncryptionTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Интеграционные тесты",
+      "name": "Интеграционные тесты",
+      "command": "./gradlew connectedAndroidTest --tests \"*MapScreenTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Тесты сканирования QR-кодов",
+      "name": "Тесты сканирования QR-кодов",
+      "command": "./gradlew :core-database:testDebugUnitTest --tests \"*QrCodeScanTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Тесты обновления приложения",
+      "name": "Тесты обновления приложения",
+      "command": "./gradlew :app:testDebugUnitTest --tests \"*AppUpdateTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Тесты обнаружения root-доступа",
+      "name": "Тесты обнаружения root-доступа",
+      "command": "./gradlew :core-security:testDebugUnitTest --tests \"*RootDetectionTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Тесты доступа к квизу",
+      "name": "Тесты доступа к квизу",
+      "command": "./gradlew :feature-quiz:testDebugUnitTest --tests \"*QuizAccessTest\"",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Проверка линтинга",
+      "name": "Проверка линтинга",
+      "command": "./gradlew ktlintCheck",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Проверка детекта",
+      "name": "Проверка детекта",
+      "command": "./gradlew detekt",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Запуск всех тестов",
+      "name": "Запуск всех тестов",
+      "command": "bash scripts/run_all_tests.sh",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "=== Запуск всех тестов проекта SafePlant ===\n1. Запуск unit-тестов...\n\nDeprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n\nYou can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.\n\nFor more on this, please refer to https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.\n✗ Unit-тесты не пройдены\n",
+      "stderr": "\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nA problem occurred configuring project ':core-mapping'.\n> Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n  when compose is enabled. See the following link for more information:\n  https://d.android.com/r/studio-ui/compose-compiler\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 2s\n"
     },
     {
-      "name": "name:",
-      "command": "name: Финальная проверка",
+      "name": "Финальная проверка",
+      "command": "bash scripts/run_final_checks.sh",
       "success": false,
-      "exit_code": 127,
-      "stdout": "",
-      "stderr": "/bin/sh: 1: name:: not found\n"
+      "exit_code": 1,
+      "stdout": "=== Финальная проверка SafePlant ===\n=== Запуск всех проверок SafePlant ===\n1. Проверка конвертации PDF в MBTiles\nКонвертация tests/data/pdf/test.pdf в tests/data/mbtiles/test.mbtiles\n✓ Все зависимости установлены\nПолучение списка слоев из tests/data/pdf/test.pdf...\nОшибка: Проверка конвертации PDF в MBTiles не пройдена\nФинальная проверка не пройдена\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 257, in <module>\n    main()\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 254, in main\n    convert_pdf_to_mbtiles(args.pdf_path, args.output_path, not args.no_validate)\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 205, in convert_pdf_to_mbtiles\n    layers = get_pdf_layers(pdf_path)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/yano4/project3/scripts/convert_pdf_to_mbtiles.py\", line 39, in get_pdf_layers\n    raise Exception(f\"Ошибка при получении информации о слоях: {result.stderr}\")\nException: Ошибка при получении информации о слоях: ogrinfo failed - unable to open 'tests/data/pdf/test.pdf'.\n\n"
     }
   ],
   "passed": false,
-  "timestamp": "2026-04-29T12:57:41.169162"
+  "timestamp": "2026-04-29T13:54:05.780895"
 }

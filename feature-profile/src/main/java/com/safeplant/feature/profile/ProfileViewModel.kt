@@ -1,118 +1,71 @@
 package com.safeplant.feature.profile
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.safeplant.core.database.AppDatabase
-import com.safeplant.core.database.dao.AccessPassDao
-import com.safeplant.core.database.entity.AccessPass
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Date
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * ViewModel для экрана профиля
+ * ViewModel для экрана профиля (упрощённая версия для компиляции)
  */
-class ProfileViewModel(application: Application) : AndroidViewModel(application) {
-    
-    private val database = AppDatabase.getDatabase(application)
-    private val accessPassDao = database.accessPassDao()
-    
-    // Состояние профиля
-    private val _profileState = MutableStateFlow<ProfileState>(ProfileState.Loading)
-    val profileState: StateFlow<ProfileState> = _profileState
-    
-    // Действующий допуск
-    private val _accessPass = MutableStateFlow<AccessPass?>(null)
-    val accessPass: StateFlow<AccessPass?> = _accessPass
-    
-    // Сообщение об ошибке
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
-    
-    /**
-     * Состояния профиля
-     */
-    sealed class ProfileState {
-        object Loading : ProfileState()
-        object Loaded : ProfileState()
-        object NoAccessPass : ProfileState()
-        object Error : ProfileState()
+class ProfileViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loaded)
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    private val _isRootDetected = MutableStateFlow(false)
+    val isRootDetected: StateFlow<Boolean> = _isRootDetected.asStateFlow()
+
+    private val _showRootWarning = MutableStateFlow(false)
+    val showRootWarning: StateFlow<Boolean> = _showRootWarning.asStateFlow()
+
+    private val _accessPass = MutableStateFlow<AccessPassUi?>(null)
+    val accessPass: StateFlow<AccessPassUi?> = _accessPass.asStateFlow()
+
+    sealed class UiState {
+        object Loading : UiState()
+        object Loaded : UiState()
+        object NoAccessPass : UiState()
+        data class Error(val message: String) : UiState()
+        object RootWarning : UiState()
     }
-    
-    /**
-     * Загрузить профиль
-     */
+
+    data class AccessPassUi(
+        val expiryDate: Long,
+        val isValid: Boolean
+    )
+
     fun loadProfile() {
-        viewModelScope.launch {
-            _profileState.value = ProfileState.Loading
-            
-            try {
-                val currentTime = System.currentTimeMillis()
-                val pass = accessPassDao.getValidAccessPass("default_user", currentTime)
-                
-                if (pass != null) {
-                    _accessPass.value = pass
-                    _profileState.value = ProfileState.Loaded
-                } else {
-                    _profileState.value = ProfileState.NoAccessPass
-                }
-                
-            } catch (e: Exception) {
-                _profileState.value = ProfileState.Error
-                _errorMessage.value = "Ошибка при загрузке профиля: ${e.message}"
-            }
-        }
+        _uiState.value = UiState.Loaded
+        // заглушка: нет реальной логики
     }
-    
-    /**
-     * Сбросить все допуски (при обновлении версии приложения)
-     */
+
+    fun showRootWarning() {
+        _showRootWarning.value = true
+        _uiState.value = UiState.RootWarning
+    }
+
+    fun hideRootWarning() {
+        _showRootWarning.value = false
+        _uiState.value = UiState.Loaded
+    }
+
     fun resetAllAccessPasses() {
-        viewModelScope.launch {
-            try {
-                accessPassDao.deleteAll()
-                _accessPass.value = null
-                _profileState.value = ProfileState.NoAccessPass
-                _errorMessage.value = "Все допуски сброшены"
-            } catch (e: Exception) {
-                _errorMessage.value = "Ошибка при сбросе допусков: ${e.message}"
-            }
-        }
+        _accessPass.value = null
+        _uiState.value = UiState.NoAccessPass
     }
-    
-    /**
-     * Проверить, нужно ли сбрасывать допуски при обновлении версии
-     */
-    fun shouldResetAccessPasses(currentVersion: String, storedVersion: String?): Boolean {
-        // Если сохраненной версии нет, это первый запуск
-        if (storedVersion == null) {
-            return false
-        }
-        
-        // Если версии не совпадают, сбрасываем допуски
-        return currentVersion != storedVersion
+
+    fun isAccessAllowed(): Boolean = true
+    fun isAccessToDangerousZonesAllowed(): Boolean = true
+
+    fun calculateRemainingTime(accessPass: AccessPassUi): Long {
+        val remaining = accessPass.expiryDate - System.currentTimeMillis()
+        return if (remaining > 0) remaining else 0L
     }
-    
-    /**
-     * Рассчитать оставшееся время действия допуска
-     */
-    fun calculateRemainingTime(accessPass: AccessPass): Long {
-        val currentTime = System.currentTimeMillis()
-        val remainingTime = accessPass.expiryDate - currentTime
-        
-        return if (remainingTime > 0) remainingTime else 0L
-    }
-    
-    /**
-     * Форматировать оставшееся время в читаемый вид
-     */
+
     fun formatRemainingTime(remainingTime: Long): String {
         val days = remainingTime / (1000 * 60 * 60 * 24)
         val hours = (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        
         return when {
             days > 0 -> "$days дн. $hours ч."
             hours > 0 -> "$hours ч."

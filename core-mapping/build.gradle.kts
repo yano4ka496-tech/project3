@@ -33,7 +33,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
-        compose = true
+       // compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-navigation"))
+    // implementation(project(":core-navigation"))
     implementation(project(":core-database"))
     
     // Compose

@@ -1,75 +1,35 @@
 package com.safeplant.feature.qr
 
 /**
- * Валидатор QR-кодов
+ * Валидатор QR-кодов формата "objectId|name"
+ * objectId: только латинские буквы и цифры, длина 1–20
+ * name: буквы (любого алфавита), цифры, пробелы, дефис, подчёркивание, точка; длина 1–50
  */
 class QRValidator {
-    
-    /**
-     * Валидация формата QR-кода
-     * Ожидаемый формат: objectId|name
-     */
+
+    private val objectIdRegex = Regex("^[A-Za-z0-9]{1,20}$")
+    private val nameRegex = Regex("^[\\p{L}\\p{N}\\s\\-_.]{1,50}$")
+
     fun validate(qrCode: String): Boolean {
-        if (qrCode.isEmpty()) {
-            return false
-        }
-        
-        // Проверяем наличие разделителя |
+        if (qrCode.isBlank()) return false
+        // Проверяем, что нет пробелов сразу перед или после разделителя
+        if (qrCode.contains(" |") || qrCode.contains("| ")) return false
         val parts = qrCode.split("|")
-        if (parts.size != 2) {
-            return false
-        }
-        
-        // Проверяем, что objectId не пустой
-        val objectId = parts[0].trim()
-        if (objectId.isEmpty()) {
-            return false
-        }
-        
-        // Проверяем, что name не пустой
-        val name = parts[1].trim()
-        if (name.isEmpty()) {
-            return false
-        }
-        
-        // Проверяем objectId на наличие недопустимых символов
-        if (!isValidObjectId(objectId)) {
-            return false
-        }
-        
-        return true
+        if (parts.size != 2) return false
+        val objectId = parts[0]
+        val name = parts[1]
+        if (objectId.isEmpty() || name.isEmpty()) return false
+        // ObjectId и name не должны содержать пробелов в начале/конце (они уже без пробелов, т.к. не было пробелов вокруг |)
+        return objectIdRegex.matches(objectId) && nameRegex.matches(name)
     }
-    
-    /**
-     * Извлечение objectId из QR-кода
-     */
+
     fun extractObjectId(qrCode: String): String {
         return qrCode.split("|")[0].trim()
     }
-    
-    /**
-     * Извлечение name из QR-кода
-     */
+
     fun extractName(qrCode: String): String {
         return qrCode.split("|")[1].trim()
     }
-    
-    /**
-     * Извлечение координат из QR-кода (если они есть)
-     * Возвращает Pair(latitude, longitude) или null
-     */
-    fun extractCoordinates(qrCode: String): Pair<Double, Double>? {
-        // В текущей реализации QR-коды не содержат координат
-        // Этот метод оставлен для будущего расширения
-        return null
-    }
-    
-    /**
-     * Проверка objectId на допустимые символы
-     * Разрешены: цифры, буквы, дефисы, подчеркивания
-     */
-    private fun isValidObjectId(objectId: String): Boolean {
-        val regex = Regex("^[a-zA-Z0-9_-]+$")
-        return regex.matches(objectId)
-    }
+
+    fun extractCoordinates(qrCode: String): Pair<Double, Double>? = null
 }

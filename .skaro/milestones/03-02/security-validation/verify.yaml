@@ -1,0 +1,10 @@
+- name: Unit-тесты валидации QR
+  command: ./gradlew :feature-qr:testDebugUnitTest --tests "*QRValidatorTest*"
+- name: Unit-тесты обнаружения root
+  command: ./gradlew :core-security:testDebugUnitTest --tests "*RootDetectorTest*"
+- name: Unit-тесты шифрованного хранилища
+  command: ./gradlew :core-security:testDebugUnitTest --tests "*EncryptedStorageTest*"
+- name: Интеграционные тесты контроля доступа
+  command: ./gradlew :feature-profile:testDebugUnitTest --tests "*ProfileViewModelTest*"
+- name: Сборка приложения
+  command: ./gradlew assembleDebug

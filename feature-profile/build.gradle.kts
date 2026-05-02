@@ -2,7 +2,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-//     id("kotlin-kapt")
     id("com.google.devtools.ksp")
 }
 
@@ -43,6 +42,8 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation(platform("androidx.compose:compose-bom:2024.11.00"))
     implementation(project(":core-database"))
+    implementation(project(":core-security"))
+    
     // Core Android
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
@@ -67,4 +68,3 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }
-

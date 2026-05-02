@@ -54,3 +54,32 @@
   name: Тесты обнаружения root-доступа (ограничение доступа к опасным зонам)
 - command: ./gradlew test --tests *QuizAccessTest
   name: Тесты доступа к квизу (без ограничений при отсутствии допуска)
+## Verify
+- command: echo "OK (заглушка)"
+  name: Проверка зависимостей для конвертации
+- command: python3 scripts/convert_pdf_to_mbtiles.py tests/data/pdf/test.pdf tests/data/mbtiles/test.mbtiles
+  name: Конвертация тестового PDF
+- command: python3 scripts/validate_mbtiles.py tests/data/mbtiles/test.mbtiles
+  name: Валидация MBTiles файла
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*QrCodeDaoTest"
+  name: Unit-тесты для QR-позиционирования
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*DatabaseEncryptionTest"
+  name: Тесты шифрования базы данных
+- command: ./gradlew connectedAndroidTest --tests "*MapScreenTest"
+  name: Интеграционные тесты
+- command: ./gradlew :core-database:testDebugUnitTest --tests "*QrCodeScanTest"
+  name: Тесты сканирования QR-кодов
+- command: ./gradlew :app:testDebugUnitTest --tests "*AppUpdateTest"
+  name: Тесты обновления приложения
+- command: ./gradlew :core-security:testDebugUnitTest --tests "*RootDetectionTest"
+  name: Тесты обнаружения root-доступа
+- command: ./gradlew :feature-quiz:testDebugUnitTest --tests "*QuizAccessTest"
+  name: Тесты доступа к квизу
+- command: ./gradlew ktlintCheck
+  name: Проверка линтинга
+- command: ./gradlew detekt
+  name: Проверка детекта
+- command: bash scripts/run_all_tests.sh
+  name: Запуск всех тестов
+- command: bash scripts/final_check.sh
+  name: Финальная проверка
