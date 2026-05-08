@@ -52,11 +52,11 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // MapLibre GL
-    implementation("org.maplibre.gl:android-sdk:10.0.1")
+    implementation("org.maplibre.gl:android-sdk:11.0.0")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.53.1")
+    kapt("com.google.dagger:hilt-compiler:2.53.1")
 
     // Testing
     testImplementation("junit:junit:4.13.2")

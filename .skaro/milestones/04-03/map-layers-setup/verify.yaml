@@ -1,0 +1,10 @@
+- name: Unit тесты для слоев карты
+  command: ./gradlew :feature-map:testDebugUnitTest --tests "com.safeplant.feature.map.*"
+- name: Интеграционные тесты для MapScreen
+  command: ./gradlew :feature-map:connectedAndroidTest --tests "com.safeplant.feature.map.MapScreenIntegrationTest"
+- name: Проверка покрытия кода
+  command: ./gradlew :feature-map:testDebugUnitTest --tests "com.safeplant.feature.map.*" --jacoco
+- name: Проверка стиля кода
+  command: ./gradlew :feature-map:detekt
+- name: Проверка сборки
+  command: ./gradlew :feature-map:assembleDebug

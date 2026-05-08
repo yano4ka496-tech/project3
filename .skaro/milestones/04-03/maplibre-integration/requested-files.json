@@ -18,5 +18,20 @@
   "build.gradle.kts",
   "gradle.properties",
   "settings.gradle.kts",
-  "core-security/src/main/java/com/safeplant/core/security/RootDetector.kt"
+  "core-security/src/main/java/com/safeplant/core/security/RootDetector.kt",
+  "feature-profile/src/main/java/com/safeplant/feature/profile/ProfileViewModel.kt",
+  "core-navigation/src/main/java/com/safeplant/core/navigation/AppNavigation.kt",
+  "core-navigation/src/main/java/com/safeplant/core/navigation/NavigationDestinations.kt",
+  "feature-quiz/src/main/java/com/safeplant/feature/quiz/QuizViewModel.kt",
+  "core-database/src/main/java/com/safeplant/core/database/entity/QuizResult.kt",
+  "core-database/src/main/java/com/safeplant/core/database/dao/QuizResultDao.kt",
+  "feature-qr/src/main/java/com/safeplant/feature/qr/QRScannerScreen.kt",
+  "feature-qr/src/main/java/com/safeplant/feature/qr/QRValidator.kt",
+  "core-mapping/src/main/java/com/safeplant/core/mapping/MapController.kt",
+  "core-mapping/src/main/java/com/safeplant/core/mapping/MapView.kt",
+  "core-database/src/main/java/com/safeplant/core/database/AppDatabase.kt",
+  "core-database/src/main/java/com/safeplant/core/database/dao/PermissionDao.kt",
+  "core-database/src/main/java/com/safeplant/core/database/entity/Permission.kt",
+  "feature-map/src/main/java/com/safeplant/feature/map/MapViewModel.kt",
+  "core-mapping/src/main/java/com/safeplant/core/mapping/MapPerformanceOptimizer.kt"
 ]

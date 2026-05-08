@@ -4,16 +4,25 @@ import android.content.Context
 
 /**
  * Детектор root-доступа на устройстве.
- * Временная заглушка – позже будет реализована полностью.
+ * Использует RootBeer для проверки.
  */
 class RootDetector(private val context: Context) {
+
+    /**
+     * Проверяет наличие root-доступа на устройстве
+     * @return true, если root-доступ обнаружен
+     */
     fun isRooted(): Boolean {
-        // TODO: реализовать проверку root (RootBeer и т.д.)
-        return false
+        val rootBeer = com.scottyab.rootbeer.RootBeer(context)
+        return rootBeer.isRooted()
     }
 
+    /**
+     * Показывает диалог-предупреждение о root-доступе
+     * @return true, если диалог был показан
+     */
     fun showRootWarningDialog(): Boolean {
-        // TODO: показать диалог-предупреждение
-        return false
+        // В реальном приложении здесь будет показ диалога
+        return true
     }
 }

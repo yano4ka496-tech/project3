@@ -42,6 +42,11 @@ dependencies {
     implementation("com.scottyab:rootbeer-lib:0.1.0")
 
     // Hilt
+    implementation("com.google.dagger:hilt-android:2.53.1")
+    kapt("com.google.dagger:hilt-compiler:2.53.1")
+
+    // Room
+    implementation(project(":core-database"))
 
     // Тестирование
     testImplementation("junit:junit:4.13.2")
@@ -51,4 +56,9 @@ dependencies {
     testImplementation("androidx.test.ext:junit:1.1.5")
     testImplementation("androidx.security:security-crypto:1.1.0-alpha06")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+}
+
+kapt {
+    correctErrorTypes = true
+    useBuildCache = false
 }
