@@ -13,12 +13,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.safeplant.core.security.RootDetector
 import com.safeplant.feature.map.MapScreen
-import com.safeplant.feature.quiz.QuizScreen
 import com.safeplant.feature.profile.ProfileScreen
+import com.safeplant.feature.profile.ProfileViewModel
 import com.safeplant.feature.qr.QRScannerScreen
+import com.safeplant.feature.quiz.QuizScreen
 import com.safeplant.feature.training.TrainingScreen
 import com.safeplant.feature.map.MapViewModel
-import com.safeplant.feature.profile.ProfileViewModel
 import com.safeplant.feature.qr.QRScannerViewModel
 import com.safeplant.feature.quiz.QuizViewModel
 import com.safeplant.feature.training.TrainingViewModel
@@ -37,7 +37,7 @@ fun AppNavigation() {
     // Состояния безопасности
     var isRooted by remember { mutableStateOf(false) }
     var hasValidAccess by remember { mutableStateOf(false) }
-    var appVersionChanged by remember { mutableStateOf(false) }
+    var showVersionUpdateDialog by remember { mutableStateOf(false) }
     
     // ViewModel для проверки состояний
     val profileViewModel: ProfileViewModel = hiltViewModel()
@@ -48,7 +48,7 @@ fun AppNavigation() {
         isRooted = rootDetector.isRooted()
         
         // Проверка версии приложения и сброс доступа при необходимости
-        appVersionChanged = profileViewModel.checkVersionAndResetAccessIfNeeded()
+        profileViewModel.checkVersionAndResetAccessIfNeeded()
         
         // Проверка действующего допуска
         hasValidAccess = profileViewModel.isAccessToDangerousZonesAllowed()
@@ -57,11 +57,17 @@ fun AppNavigation() {
         val startDestination = when {
             isRooted -> NavigationDestinations.Profile.route
             !hasValidAccess -> NavigationDestinations.Profile.route
+            profileViewModel.versionChanged.value -> NavigationDestinations.Profile.route
             else -> NavigationDestinations.Map.route
         }
         
         // Установка начального экрана
         navController.graph.startDestination = startDestination
+        
+        // Если версия изменилась, показываем диалог
+        if (profileViewModel.versionChanged.value) {
+            showVersionUpdateDialog = true
+        }
     }
     
     // Обработка навигации с проверкой состояний
@@ -141,8 +147,7 @@ fun AppNavigation() {
                     if (!isRooted) {
                         navController.navigate(NavigationDestinations.Quiz.route)
                     }
-                },
-                viewModel = profileViewModel
+                }
             )
         }
         
@@ -177,4 +182,47 @@ fun AppNavigation() {
             navController.navigate(NavigationDestinations.Map.route)
         }
     }
+    
+    // Диалог обновления версии
+    if (showVersionUpdateDialog) {
+        VersionUpdateDialog(
+            onConfirm = {
+                profileViewModel.confirmVersionUpdate()
+                showVersionUpdateDialog = false
+            },
+            onDismiss = {
+                profileViewModel.cancelVersionUpdate()
+                showVersionUpdateDialog = false
+            }
+        )
+    }
+}
+
+/**
+ * Диалоговое окно обновления версии приложения
+ */
+@Composable
+private fun VersionUpdateDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { androidx.compose.material3.Text(text = "Обновление версии приложения") },
+        text = { 
+            androidx.compose.material3.Text(
+                text = "Обнаружено обновление версии приложения. Все данные о допусках будут сброшены. Пройдите квиз для получения нового допуска."
+            ) 
+        },
+        confirmButton = {
+            androidx.compose.material3.Button(onClick = onConfirm) {
+                androidx.compose.material3.Text("Принять")
+            }
+        },
+        dismissButton = {
+            androidx.compose.material3.Button(onClick = onDismiss) {
+                androidx.compose.material3.Text("Отмена")
+            }
+        }
+    )
 }

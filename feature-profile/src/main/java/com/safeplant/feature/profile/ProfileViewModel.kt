@@ -1,79 +1,196 @@
 package com.safeplant.feature.profile
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.safeplant.core.database.dao.AccessPassDao
+import com.safeplant.core.database.entity.AccessPass
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
- * ViewModel для экрана профиля (упрощённая версия для компиляции)
+ * ViewModel для экрана профиля пользователя
+ * Управляет состоянием допуска, проверкой срока действия и обновления версии
  */
-class ProfileViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Loaded)
-    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
-
-    private val _isRootDetected = MutableStateFlow(false)
-    val isRootDetected: StateFlow<Boolean> = _isRootDetected.asStateFlow()
-
-    private val _showRootWarning = MutableStateFlow(false)
-    val showRootWarning: StateFlow<Boolean> = _showRootWarning.asStateFlow()
-
-    private val _accessPass = MutableStateFlow<AccessPassUi?>(null)
-    val accessPass: StateFlow<AccessPassUi?> = _accessPass.asStateFlow()
-
-    sealed class UiState {
-        object Loading : UiState()
-
-        object Loaded : UiState()
-
-        object NoAccessPass : UiState()
-
-        data class Error(val message: String) : UiState()
-
-        object RootWarning : UiState()
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
+    private val context: Context,
+    private val accessPassDao: AccessPassDao
+) : ViewModel() {
+    
+    private val _accessStatus = MutableStateFlow<AccessStatus>(AccessStatus.Loading)
+    val accessStatus: StateFlow<AccessStatus> = _accessStatus.asStateFlow()
+    
+    private val _remainingTime = MutableStateFlow<Long>(0)
+    val remainingTime: StateFlow<Long> = _remainingTime.asStateFlow()
+    
+    private val _showVersionUpdateDialog = MutableStateFlow(false)
+    val showVersionUpdateDialog: StateFlow<Boolean> = _showVersionUpdateDialog.asStateFlow()
+    
+    private val _currentVersion = MutableStateFlow(0)
+    val currentVersion: StateFlow<Int> = _currentVersion.asStateFlow()
+    
+    private val _savedVersion = MutableStateFlow(0)
+    val savedVersion: StateFlow<Int> = _savedVersion.asStateFlow()
+    
+    private val encryptedPrefs: SharedPreferences by lazy {
+        // Используем EncryptedSharedPreferences для хранения чувствительных данных
+        androidx.security.crypto.EncryptedSharedPreferences.create(
+            context,
+            "safeplant_encrypted_prefs",
+            android.security.keystore.KeyProperties.KEY_ALGORITHM_AES,
+            androidx.security.crypto.EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            androidx.security.crypto.EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
     }
-
-    data class AccessPassUi(
-        val expiryDate: Long,
-        val isValid: Boolean,
-    )
-
-    fun loadProfile() {
-        _uiState.value = UiState.Loaded
-        // заглушка: нет реальной логики
+    
+    /**
+     * Состояние доступа к опасным зонам
+     */
+    sealed class AccessStatus {
+        object Loading : AccessStatus()
+        object Allowed : AccessStatus()
+        object Denied : AccessStatus()
+        object Expired : AccessStatus()
     }
-
-    fun showRootWarning() {
-        _showRootWarning.value = true
-        _uiState.value = UiState.RootWarning
+    
+    /**
+     * Инициализация при создании ViewModel
+     */
+    init {
+        loadAccessStatus()
+        loadVersionInfo()
     }
-
-    fun hideRootWarning() {
-        _showRootWarning.value = false
-        _uiState.value = UiState.Loaded
+    
+    /**
+     * Загружает статус доступа к опасным зонам
+     */
+    private fun loadAccessStatus() {
+        viewModelScope.launch {
+            val currentTime = System.currentTimeMillis()
+            val hasValidPass = accessPassDao.hasValidAccessPass("default_user", currentTime)
+            
+            _accessStatus.value = when {
+                hasValidPass -> AccessStatus.Allowed
+                else -> AccessStatus.Expired
+            }
+            
+            // Обновляем оставшееся время
+            updateRemainingTime()
+        }
     }
-
-    fun resetAllAccessPasses() {
-        _accessPass.value = null
-        _uiState.value = UiState.NoAccessPass
+    
+    /**
+     * Проверяет, разрешен ли доступ к опасным зонам
+     */
+    fun isAccessToDangerousZonesAllowed(): Boolean {
+        return when (_accessStatus.value) {
+            AccessStatus.Allowed -> true
+            else -> false
+        }
     }
-
-    fun isAccessAllowed(): Boolean = true
-
-    fun isAccessToDangerousZonesAllowed(): Boolean = true
-
-    fun calculateRemainingTime(accessPass: AccessPassUi): Long {
-        val remaining = accessPass.expiryDate - System.currentTimeMillis()
-        return if (remaining > 0) remaining else 0L
+    
+    /**
+     * Вычисляет оставшееся время действия допуска
+     */
+    fun calculateRemainingTime(): Long {
+        val currentTime = System.currentTimeMillis()
+        val accessPass = accessPassDao.getValidAccessPass("default_user", currentTime)
+        
+        return accessPass?.expiryDate?.minus(currentTime) ?: 0
     }
-
-    fun formatRemainingTime(remainingTime: Long): String {
-        val days = remainingTime / (1000 * 60 * 60 * 24)
-        val hours = (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    
+    /**
+     * Форматирует оставшееся время в читаемом формате
+     */
+    fun formatRemainingTime(): String {
+        val remaining = calculateRemainingTime()
+        
+        val days = TimeUnit.MILLISECONDS.toDays(remaining)
+        val hours = TimeUnit.MILLISECONDS.toHours(remaining) % 24
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(remaining) % 60
+        
         return when {
             days > 0 -> "$days дн. $hours ч."
             hours > 0 -> "$hours ч."
-            else -> "Менее часа"
+            minutes > 0 -> "$minutes мин."
+            else -> "Менее минуты"
         }
+    }
+    
+    /**
+     * Обновляет оставшееся время
+     */
+    private fun updateRemainingTime() {
+        _remainingTime.value = calculateRemainingTime()
+    }
+    
+    /**
+     * Загружает информацию о версии приложения
+     */
+    private fun loadVersionInfo() {
+        // Получаем текущую версию из PackageManager
+        val packageManager = context.packageManager
+        val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+        _currentVersion.value = packageInfo.versionCode
+        
+        // Получаем сохраненную версию из EncryptedSharedPreferences
+        _savedVersion.value = encryptedPrefs.getInt("app_version", 0)
+    }
+    
+    /**
+     * Проверяет, было ли обновление версии приложения
+     * @return true, если версия изменилась
+     */
+    fun checkVersionAndResetAccessIfNeeded(): Boolean {
+        val current = _currentVersion.value
+        val saved = _savedVersion.value
+        
+        if (current != saved) {
+            // Версия изменилась - показываем диалог обновления
+            _showVersionUpdateDialog.value = true
+            return true
+        }
+        
+        return false
+    }
+    
+    /**
+     * Подтверждает обновление версии и сбрасывает данные
+     */
+    fun confirmVersionUpdate() {
+        // Сохраняем новую версию
+        encryptedPrefs.edit().putInt("app_version", _currentVersion.value).apply()
+        
+        // Сбрасываем допуски
+        viewModelScope.launch {
+            accessPassDao.resetAllAccessPasses()
+        }
+        
+        // Закрываем диалог
+        _showVersionUpdateDialog.value = false
+        
+        // Обновляем статус
+        loadAccessStatus()
+    }
+    
+    /**
+     * Отменяет обновление версии
+     */
+    fun cancelVersionUpdate() {
+        _showVersionUpdateDialog.value = false
+    }
+    
+    /**
+     * Обновляет статус доступа
+     */
+    fun updateAccessStatus() {
+        loadAccessStatus()
     }
 }

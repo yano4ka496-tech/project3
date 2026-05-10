@@ -1,6 +1,5 @@
 package com.safeplant.core.database.dao
 
-import android.content.Context
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -56,27 +55,4 @@ interface PermissionDao {
      */
     @Query("SELECT COUNT(*) FROM permissions WHERE isPassValid = 1 AND expiryDate > :currentTime")
     suspend fun hasValidPermission(currentTime: Long): Int
-
-    /**
-     * Проверка и сброс допусков при обновлении приложения
-     * @param context Контекст приложения для получения информации о версии
-     * @return true, если версия изменилась и допуски были сброшены
-     */
-    suspend fun checkAndResetPermissionsIfNeeded(context: Context): Boolean =
-        withContext(Dispatchers.IO) {
-            val packageManager = context.packageManager
-            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
-            val currentVersion = packageInfo.versionName
-
-            // Получаем последний сохраненный версию
-            val lastPermission = getAllPermissions().maxByOrNull { it.issuedDate }
-
-            // Если есть допуски и версия приложения изменилась, сбрасываем их
-            if (lastPermission != null && lastPermission.version != currentVersion) {
-                invalidateAllPermissions()
-                true
-            } else {
-                false
-            }
-        }
 }

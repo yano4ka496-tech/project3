@@ -2,7 +2,6 @@ package com.safeplant.core.mapping.layers
 
 import android.content.Context
 import com.safeplant.core.mapping.LayerStyle
-import com.safeplant.core.mapping.LayerType
 import com.safeplant.core.mapping.MapLayer
 import com.safeplant.core.storage.AssetManager
 import org.json.JSONArray
@@ -10,12 +9,16 @@ import org.json.JSONObject
 
 /**
  * Слой опасных зон (красные полигоны)
- * Отображает опасные зоны на карте в виде красных полигонов
+ * Отображает опасные зоны на карте и предоставляет доступ к ним для проверки маршрутов
  */
 class HazardsLayer(
     id: String,
     style: LayerStyle = LayerStyle.HAZARDS
-) : BaseLayer(id, style) {
+) : MapLayer(
+    type = com.safeplant.core.mapping.LayerType.HAZARDS,
+    style = style,
+    id = id
+) {
     
     private val context: Context? = null // В реальном приложении будет инжектирован
     private val assetManager = AssetManager(context)
@@ -23,12 +26,7 @@ class HazardsLayer(
     /**
      * Список опасных зон
      */
-    private var hazards = mutableListOf<HazardFeature>()
-    
-    /**
-     * Информация для всплывающих окон
-     */
-    private var popupInfo = mutableMapOf<String, PopupInfo>()
+    private val hazardZones = mutableListOf<HazardZone>()
     
     /**
      * Загружает данные слоя из assets
@@ -46,15 +44,14 @@ class HazardsLayer(
     }
     
     /**
-     * Парсит GeoJSON данные
+     * Парсит GeoJSON данные и создает модели опасных зон
      */
     private fun parseGeoJson(geoJsonData: String) {
         try {
             val jsonObject = JSONObject(geoJsonData)
             val features = jsonObject.getJSONArray("features")
             
-            hazards.clear()
-            popupInfo.clear()
+            hazardZones.clear()
             
             for (i in 0 until features.length()) {
                 val feature = features.getJSONObject(i)
@@ -63,26 +60,21 @@ class HazardsLayer(
                 
                 // Проверяем тип геометрии (ожидается Polygon)
                 if (geometry.getString("type") == "Polygon") {
-                    val hazard = HazardFeature(
+                    val zone = HazardZone(
                         id = feature.getString("id"),
                         name = properties.optString("name", "Неизвестная зона"),
                         description = properties.optString("description", "Нет описания"),
+                        centerLat = properties.optDouble("center_lat", 0.0),
+                        centerLon = properties.optDouble("center_lon", 0.0),
                         coordinates = parsePolygonCoordinates(geometry.getJSONArray("coordinates"))
                     )
                     
-                    hazards.add(hazard)
-                    
-                    // Сохраняем информацию для всплывающего окна
-                    popupInfo[hazard.id] = PopupInfo(
-                        title = hazard.name,
-                        description = hazard.description,
-                        type = "Опасная зона"
-                    )
+                    hazardZones.add(zone)
                 }
             }
         } catch (e: Exception) {
             // Обработка ошибки парсинга
-            // В реальном приложении здесь будет логирование
+            throw Exception("Ошибка парсинга GeoJSON опасных зон: ${e.message}", e)
         }
     }
     
@@ -114,15 +106,14 @@ class HazardsLayer(
     override fun render() {
         // В реальном приложении здесь будет код отрисовки полигонов на карте
         // Для заглушки просто логируем
-        println("Отрисовка ${hazards.size} опасных зон")
+        println("Отрисовка ${hazardZones.size} опасных зон")
     }
     
     /**
      * Очищает ресурсы слоя
      */
     override fun cleanup() {
-        hazards.clear()
-        popupInfo.clear()
+        hazardZones.clear()
     }
     
     /**
@@ -136,26 +127,31 @@ class HazardsLayer(
      * Обрабатывает нажатие на элемент слоя
      */
     override fun onFeatureClick(featureId: String): PopupInfo? {
-        return popupInfo[featureId]
+        return hazardZones.find { it.id == featureId }?.let { zone ->
+            PopupInfo(
+                title = zone.name,
+                description = zone.description,
+                type = "Опасная зона"
+            )
+        }
     }
     
     /**
      * Возвращает список опасных зон
      */
-    fun getHazards(): List<HazardFeature> = hazards
+    fun getHazardZones(): List<HazardZone> = hazardZones
     
     /**
-     * Возвращает информацию для всплывающих окон
+     * Возвращает опасную зону по ID
      */
-    fun getPopupInfo(): Map<String, PopupInfo> = popupInfo
+    fun getHazardZoneById(id: String): HazardZone? {
+        return hazardZones.find { it.id == id }
+    }
     
     /**
-     * Класс для представления опасной зоны
+     * Проверяет, существует ли опасная зона с указанным ID
      */
-    data class HazardFeature(
-        val id: String,
-        val name: String,
-        val description: String,
-        val coordinates: List<List<Double>>
-    )
+    fun hasHazardZone(id: String): Boolean {
+        return hazardZones.any { it.id == id }
+    }
 }

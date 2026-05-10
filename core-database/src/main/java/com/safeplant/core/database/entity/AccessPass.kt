@@ -22,4 +22,12 @@ data class AccessPass(
     val issuedAt: Long,
     val expiryDate: Long,
     val isValid: Boolean = true,
-)
+) {
+    /**
+     * Проверяет, действителен ли допуск на текущий момент
+     * @return true, если срок действия не истек
+     */
+    fun isValid(currentTime: Long = System.currentTimeMillis()): Boolean {
+        return isValid && expiryDate > currentTime
+    }
+}

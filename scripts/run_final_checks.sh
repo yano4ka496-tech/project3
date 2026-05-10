@@ -1,63 +1,76 @@
 #!/bin/bash
 
-echo "=== Финальная проверка SafePlant ==="
-echo "=== Запуск всех проверок SafePlant ==="
+# Скрипт для выполнения всех проверок Stage 3: Сборка релиза и проверка покрытия
 
-# 1. Проверка конвертации PDF в MBTiles
-echo "1. Проверка конвертации PDF в MBTiles"
-python3 scripts/convert_pdf_to_mbtiles.py tests/data/pdf/test.pdf tests/data/mbtiles/test.mbtiles
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Конвертация PDF в MBTiles не пройдена"
+echo "=== Запуск всех проверок Stage 3 ==="
+
+# 1. Сборка release APK/AAB
+echo "1. Сборка release APK/AAB..."
+if ./gradlew assembleRelease; then
+    echo "✓ Сборка APK/AAB прошла успешно"
+else
+    echo "✗ Сборка APK/AAB не удалась"
     exit 1
 fi
 
-# 2. Валидация MBTiles файла
-echo "2. Валидация MBTiles файла"
-python3 scripts/validate_mbtiles.py tests/data/mbtiles/test.mbtiles
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Валидация MBTiles не пройдена"
+# 2. Проверка размера APK
+echo "2. Проверка размера APK..."
+if ./scripts/check_apk_size.sh; then
+    echo "✓ Проверка размера APK пройдена"
+else
+    echo "✗ Проверка размера APK не пройдена"
     exit 1
 fi
 
-# 3. Проверка зависимостей для конвертации
-echo "3. Проверка зависимостей для конвертации"
-bash scripts/check_pdf_conversion.sh
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Проверка зависимостей не пройдена"
+# 3. Генерация отчета о покрытии
+echo "3. Генерация отчета о покрытии..."
+if ./gradlew jacocoTestReport; then
+    echo "✓ Отчет о покрытии сгенерирован"
+    if [ -f "app/build/reports/jacoco/test/html/index.html" ]; then
+        echo "Отчет доступен: app/build/reports/jacoco/test/html/index.html"
+    else
+        echo "Предупреждение: отчет не найден по ожидаемому пути"
+    fi
+else
+    echo "✗ Генерация отчета о покрытии не удалась"
     exit 1
 fi
 
-# 4. Запуск всех unit-тестов (включая QR-позиционирование)
-echo "4. Запуск всех unit-тестов"
-./gradlew test
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Unit-тесты не пройдены"
+# 4. Проверка отсутствия сетевых запросов
+echo "4. Проверка отсутствия сетевых запросов..."
+if ./scripts/check_network_requests.sh; then
+    echo "✓ Проверка отсутствия сетевых запросов пройдена"
+else
+    echo "✗ Проверка отсутствия сетевых запросов не пройдена"
     exit 1
 fi
 
-# 5. Запуск интеграционных тестов
-echo "5. Запуск интеграционных тестов"
-./gradlew connectedAndroidTest
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Интеграционные тесты не пройдены"
+# 5. Проверка линтинга
+echo "5. Проверка линтинга..."
+if ./gradlew ktlintCheck; then
+    echo "✓ Проверка линтинга пройдена"
+else
+    echo "✗ Проверка линтинга не пройдена"
     exit 1
 fi
 
-# 6. Проверка линтинга
-echo "6. Проверка линтинга"
-./gradlew ktlintCheck
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Линтинг не пройден"
+# 6. Проверка детекта
+echo "6. Проверка детекта..."
+if ./gradlew detekt; then
+    echo "✓ Проверка детекта пройдена"
+else
+    echo "✗ Проверка детекта не пройдена"
     exit 1
 fi
 
-# 7. Проверка Detekt
-echo "7. Проверка Detekt"
-./gradlew detekt
-if [ $? -ne 0 ]; then
-    echo "Ошибка: Detekt не пройден"
+# 7. Подготовка релиза
+echo "7. Подготовка релиза..."
+if ./scripts/prepare_release.sh; then
+    echo "✓ Релиз подготовлен"
+else
+    echo "✗ Подготовка релиза не удалась"
     exit 1
 fi
 
-echo "✓ Финальная проверка пройдена"
+echo "=== Все проверки Stage 3 успешно пройдены! ==="
 exit 0

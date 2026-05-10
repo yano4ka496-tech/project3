@@ -2,8 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-//     id("kotlin-kapt")
-    id("com.google.devtools.ksp")
+    id("jacoco")
 }
 
 android {
@@ -70,4 +69,18 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.0")
+}
+
+// Задача для генерации отчета JaCoCo
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    sourceDirectories.setFrom(files("${project.projectDir}/src/main/java"))
+    classDirectories.setFrom(files("${project.buildDir}/tmp/kotlin/classes/debug"))
+    executionData.setFrom(files("${project.buildDir}/jacoco/testDebugUnitTest.exec"))
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }

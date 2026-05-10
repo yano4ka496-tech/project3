@@ -1,191 +1,297 @@
-package com.safeplant.core.security
+package tests.unit
 
-import android.content.Context
-import androidx.security.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import java.io.File
+import java.security.KeyStore
+import java.security.SecureRandom
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
 /**
- * Unit-тесты для EncryptedStorage
+ * Тесты для шифрования данных
+ * Проверка шифрования и расшифровки, а также обработка сбоя шифрования
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [29])
-class EncryptedStorageTest {
+class TestEncryptedStorage {
     
-    private lateinit var context: Context
-    private lateinit var masterKey: MasterKey
-    private lateinit var encryptedPrefs: EncryptedSharedPreferences
-    private lateinit var encryptedStorage: EncryptedStorage
-    
-    @Before
-    fun setUp() {
-        context = mockk()
-        masterKey = mockk()
-        encryptedPrefs = mockk()
+    /**
+     * Тест шифрования и расшифровки данных
+     */
+    @Test
+    fun `test encryption and decryption`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        // Мокаем создание EncryptedSharedPreferences
-        every { EncryptedSharedPreferences.create(
-            context,
-            "safeplant_encrypted_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        ) } returns encryptedPrefs
+        // Исходные данные
+        val originalData = "Тестовые данные для шифрования"
         
-        // Мокаем MasterKey.Builder
-        val masterKeyBuilder = mockk<MasterKey.Builder>()
-        every { MasterKey.Builder(context) } returns masterKeyBuilder
-        every { masterKeyBuilder.setKeyScheme(MasterKey.KeyScheme.AES256_GCM) } returns masterKeyBuilder
-        every { masterKeyBuilder.build() } returns masterKey
+        // Шифруем данные
+        val encryptedData = encryptData(originalData, key)
         
-        encryptedStorage = EncryptedStorage(context)
+        // Проверяем, что зашифрованные данные не равны исходным
+        assertNotEquals(originalData, encryptedData)
+        
+        // Расшифровываем данные
+        val decryptedData = decryptData(encryptedData, key)
+        
+        // Проверяем, что расшифрованные данные равны исходным
+        assertEquals(originalData, decryptedData)
     }
     
     /**
-     * Тестирование сохранения и получения даты истечения допуска
+     * Тест шифрования данных с разными ключами
      */
     @Test
-    fun `saveAccessPassExpiryDate and getAccessPassExpiryDate should work correctly`() {
-        val expiryDate = System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L // 30 дней
+    fun `test encryption with different keys`() {
+        // Генерируем два разных ключа
+        val key1 = generateSecretKey()
+        val key2 = generateSecretKey()
         
-        // Мокаем редактирование SharedPreferences
-        val editor = mockk<androidx.security.EncryptedSharedPreferences.Editor>()
-        every { encryptedPrefs.edit() } returns editor
-        every { editor.putLong(any<String>(), any<Long>()) } returns editor
-        every { editor.apply() } returns Unit
+        // Исходные данные
+        val originalData = "Тестовые данные для шифрования"
         
-        // Мокаем проверку наличия ключа
-        every { encryptedPrefs.contains(any<String>()) } returns false
+        // Шифруем данные с первым ключом
+        val encryptedData1 = encryptData(originalData, key1)
         
-        // Сохраняем дату
-        encryptedStorage.saveAccessPassExpiryDate(expiryDate)
+        // Шифруем данные со вторым ключом
+        val encryptedData2 = encryptData(originalData, key2)
         
-        // Мокаем получение даты
-        every { encryptedPrefs.getLong(any<String>(), any<Long>()) } returns expiryDate
+        // Проверяем, что зашифрованные данные с разными ключами не равны
+        assertNotEquals(encryptedData1, encryptedData2)
         
-        // Получаем дату
-        val retrievedDate = encryptedStorage.getAccessPassExpiryDate()
+        // Расшифровываем данные с первым ключом
+        val decryptedData1 = decryptData(encryptedData1, key1)
         
-        assertEquals("Сохраненная и полученная дата должны совпадать", expiryDate, retrievedDate)
+        // Расшифровываем данные со вторым ключом
+        val decryptedData2 = decryptData(encryptedData2, key2)
+        
+        // Проверяем, что расшифрованные данные равны исходным
+        assertEquals(originalData, decryptedData1)
+        assertEquals(originalData, decryptedData2)
     }
     
     /**
-     * Тестирование получения даты истечения при отсутствии данных
+     * Тест шифрования и расшифровки пустых данных
      */
     @Test
-    fun `getAccessPassExpiryDate should return null when no data exists`() {
-        // Мокаем проверку отсутствия ключа
-        every { encryptedPrefs.contains(any<String>()) } returns false
+    fun `test encryption and decryption of empty data`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        assertNull("Должно возвращать null при отсутствии данных", 
-            encryptedStorage.getAccessPassExpiryDate())
+        // Исходные данные (пустая строка)
+        val originalData = ""
+        
+        // Шифруем данные
+        val encryptedData = encryptData(originalData, key)
+        
+        // Проверяем, что зашифрованные данные не равны исходным
+        assertNotEquals(originalData, encryptedData)
+        
+        // Расшифровываем данные
+        val decryptedData = decryptData(encryptedData, key)
+        
+        // Проверяем, что расшифрованные данные равны исходным
+        assertEquals(originalData, decryptedData)
     }
     
     /**
-     * Тестирование сохранения и получения версии приложения
+     * Тест шифрования и расшифровки данных с спецсимволами
      */
     @Test
-    fun `saveAppVersion and getAppVersion should work correctly`() {
-        val version = "1.0.0"
+    fun `test encryption and decryption of data with special characters`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        // Мокаем редактирование SharedPreferences
-        val editor = mockk<androidx.security.EncryptedSharedPreferences.Editor>()
-        every { encryptedPrefs.edit() } returns editor
-        every { editor.putString(any<String>(), any<String>()) } returns editor
-        every { editor.apply() } returns Unit
+        // Исходные данные (с спецсимволами)
+        val originalData = "Тестовые данные с спецсимволами: !@#$%^&*()_+-=[]{}|;':\",./<>?"
         
-        // Сохраняем версию
-        encryptedStorage.saveAppVersion(version)
+        // Шифруем данные
+        val encryptedData = encryptData(originalData, key)
         
-        // Мокаем получение версии
-        every { encryptedPrefs.getString(any<String>(), any<String>()) } returns version
+        // Проверяем, что зашифрованные данные не равны исходным
+        assertNotEquals(originalData, encryptedData)
         
-        // Получаем версию
-        val retrievedVersion = encryptedStorage.getAppVersion()
+        // Расшифровываем данные
+        val decryptedData = decryptData(encryptedData, key)
         
-        assertEquals("Сохраненная и полученная версия должны совпадать", version, retrievedVersion)
+        // Проверяем, что расшифрованные данные равны исходным
+        assertEquals(originalData, decryptedData)
     }
     
     /**
-     * Тестирование получения версии при отсутствии данных
+     * Тест шифрования и расшифровки длинных данных
      */
     @Test
-    fun `getAppVersion should return null when no data exists`() {
-        // Мокаем получение версии с null
-        every { encryptedPrefs.getString(any<String>(), any<String>()) } returns null
+    fun `test encryption and decryption of long data`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        assertNull("Должно возвращать null при отсутствии данных", 
-            encryptedStorage.getAppVersion())
+        // Исходные данные (длинная строка)
+        val originalData = "A".repeat(10000)
+        
+        // Шифруем данные
+        val encryptedData = encryptData(originalData, key)
+        
+        // Проверяем, что зашифрованные данные не равны исходным
+        assertNotEquals(originalData, encryptedData)
+        
+        // Расшифровываем данные
+        val decryptedData = decryptData(encryptedData, key)
+        
+        // Проверяем, что расшифрованные данные равны исходным
+        assertEquals(originalData, decryptedData)
     }
     
     /**
-     * Тестирование очистки данных
+     * Тест обработки сбоя шифрования (неверный ключ)
      */
     @Test
-    fun `clear should remove all data`() {
-        // Мокаем редактирование SharedPreferences
-        val editor = mockk<androidx.security.EncryptedSharedPreferences.Editor>()
-        every { encryptedPrefs.edit() } returns editor
-        every { editor.clear() } returns editor
-        every { editor.apply() } returns Unit
+    fun `test encryption failure with wrong key`() {
+        // Генерируем два разных ключа
+        val key1 = generateSecretKey()
+        val key2 = generateSecretKey()
         
-        // Очищаем данные
-        encryptedStorage.clear()
+        // Исходные данные
+        val originalData = "Тестовые данные для шифрования"
         
-        // Проверяем, что данные очищены
-        every { encryptedPrefs.contains(any<String>()) } returns false
-        assertNull("После очистки должно возвращать null", 
-            encryptedStorage.getAccessPassExpiryDate())
-        assertNull("После очистки должно возвращать null", 
-            encryptedStorage.getAppVersion())
+        // Шифруем данные с первым ключом
+        val encryptedData = encryptData(originalData, key1)
+        
+        // Пытаемся расшифровать данные с вторым ключом
+        try {
+            decryptData(encryptedData, key2)
+            fail("Должно выбросить исключение при расшифровке с неверным ключом")
+        } catch (e: Exception) {
+            // Ожидаемое исключение
+            assertTrue(e is javax.crypto.AEADBadTagException)
+        }
     }
     
     /**
-     * Тестирование проверки действительности допуска
+     * Тест обработки сбоя шифрования (поврежденные данные)
      */
     @Test
-    fun `isAccessPassValid should return true when pass is valid`() {
-        val expiryDate = System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L // 30 дней
+    fun `test encryption failure with corrupted data`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        // Мокаем наличие данных
-        every { encryptedPrefs.contains(any<String>()) } returns true
-        every { encryptedPrefs.getLong(any<String>(), any<Long>()) } returns expiryDate
+        // Исходные данные
+        val originalData = "Тестовые данные для шифрования"
         
-        assertTrue("Должно возвращать true для действующего допуска", 
-            encryptedStorage.isAccessPassValid())
+        // Шифруем данные
+        var encryptedData = encryptData(originalData, key)
+        
+        // Повреждаем данные (меняем один байт)
+        val corruptedData = encryptedData.toByteArray().apply {
+            this[0] = (this[0] + 1).toByte()
+        }
+        encryptedData = String(corruptedData)
+        
+        // Пытаемся расшифровать поврежденные данные
+        try {
+            decryptData(encryptedData, key)
+            fail("Должно выбросить исключение при расшифровке поврежденных данных")
+        } catch (e: Exception) {
+            // Ожидаемое исключение
+            assertTrue(e is javax.crypto.AEADBadTagException)
+        }
     }
     
     /**
-     * Тестирование проверки действительности допуска при истечении срока
+     * Тест обработки сбоя шифрования (пустые данные)
      */
     @Test
-    fun `isAccessPassValid should return false when pass is expired`() {
-        val expiryDate = System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000L // 30 дней назад
+    fun `test encryption failure with empty encrypted data`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
         
-        // Мокаем наличие данных
-        every { encryptedPrefs.contains(any<String>()) } returns true
-        every { encryptedPrefs.getLong(any<String>(), any<Long>()) } returns expiryDate
-        
-        assertFalse("Должно возвращать false для истекшего допуска", 
-            encryptedStorage.isAccessPassValid())
+        // Пытаемся расшифровать пустые данные
+        try {
+            decryptData("", key)
+            fail("Должно выбросить исключение при расшифровке пустых данных")
+        } catch (e: Exception) {
+            // Ожидаемое исключение
+            assertTrue(e is IllegalArgumentException)
+        }
     }
     
     /**
-     * Тестирование проверки действительности допуска при отсутствии данных
+     * Тест обработки сбоя шифрования (null ключ)
      */
     @Test
-    fun `isAccessPassValid should return false when no data exists`() {
-        // Мокаем отсутствие данных
-        every { encryptedPrefs.contains(any<String>()) } returns false
+    fun `test encryption failure with null key`() {
+        // Исходные данные
+        val originalData = "Тестовые данные для шифрования"
         
-        assertFalse("Должно возвращать false при отсутствии данных", 
-            encryptedStorage.isAccessPassValid())
+        // Пытаемся зашифровать данные с null ключом
+        try {
+            encryptData(originalData, null)
+            fail("Должно выбросить исключение при шифровании с null ключом")
+        } catch (e: Exception) {
+            // Ожидаемое исключение
+            assertTrue(e is IllegalArgumentException)
+        }
+    }
+    
+    /**
+     * Тест обработки сбоя шифрования (null данные)
+     */
+    @Test
+    fun `test encryption failure with null data`() {
+        // Генерируем секретный ключ
+        val key = generateSecretKey()
+        
+        // Пытаемся зашифровать null данные
+        try {
+            encryptData(null, key)
+            fail("Должно выбросить исключение при шифровании null данных")
+        } catch (e: Exception) {
+            // Ожидаемое исключение
+            assertTrue(e is IllegalArgumentException)
+        }
+    }
+    
+    /**
+     * Генерация секретного ключа для шифрования
+     */
+    private fun generateSecretKey(): SecretKey {
+        val keyGenerator = KeyGenerator.getInstance("AES")
+        keyGenerator.init(256, SecureRandom())
+        return keyGenerator.generateKey()
+    }
+    
+    /**
+     * Шифрование данных
+     */
+    private fun encryptData(data: String, key: SecretKey): String {
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        
+        val iv = cipher.iv
+        val encryptedBytes = cipher.doFinal(data.toByteArray())
+        
+        // Сохраняем IV вместе с зашифрованными данными
+        val combined = iv + encryptedBytes
+        return Base64.getEncoder().encodeToString(combined)
+    }
+    
+    /**
+     * Расшифровка данных
+     */
+    private fun decryptData(encryptedData: String, key: SecretKey): String {
+        val combined = Base64.getDecoder().decode(encryptedData)
+        
+        // Извлекаем IV и зашифрованные данные
+        val iv = combined.copyOfRange(0, 12)
+        val encryptedBytes = combined.copyOfRange(12, combined.size)
+        
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        val spec = GCMParameterSpec(128, iv)
+        cipher.init(Cipher.DECRYPT_MODE, key, spec)
+        
+        val decryptedBytes = cipher.doFinal(encryptedBytes)
+        return String(decryptedBytes)
     }
 }

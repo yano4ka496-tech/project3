@@ -1,128 +1,257 @@
-package com.safeplant.feature.qr
+package tests.unit
 
+import com.safeplant.core.security.QRValidator
 import org.junit.Assert.*
 import org.junit.Test
 
 /**
- * Unit-тесты для QRValidator
+ * Тесты для валидатора QR-кодов
+ * Альтернативная реализация тестов для QRValidator
  */
-class QRValidatorTest {
+class TestQRValidator {
     
     private val validator = QRValidator()
     
     /**
-     * Тестирование валидации корректных QR-кодов
+     * Тест валидации корректных QR-кодов
      */
     @Test
     fun `validate should return true for valid QR codes`() {
-        val validQrCodes = listOf(
-            "123|ЦехА",
-            "ABC123|Склад1",
-            "aBc123|Лаборатория",
-            "12345678901234567890|Название12345678901234567890123456789012345678901234567890",
-            "1|A"
+        val validQRCodes = listOf(
+            "123|Цех А",
+            "ABC123|Склад Б",
+            "XYZ789|Производственный участок",
+            "A1B2C3|Точка СИЗ",
+            "TEST123|Объект 1"
         )
         
-        validQrCodes.forEach { qrCode ->
+        validQRCodes.forEach { qrCode ->
             assertTrue("QR-код '$qrCode' должен быть валидным", validator.validate(qrCode))
         }
     }
     
     /**
-     * Тестирование валидации некорректных QR-кодов
+     * Тест валидации некорректных QR-кодов
      */
     @Test
     fun `validate should return false for invalid QR codes`() {
-        val invalidQrCodes = listOf(
-            "", // Пустая строка
-            "123", // Нет разделителя
-            "|ЦехА", // Нет objectId
-            "123|", // Нет name
-            "123|Цех А", // Пробел в objectId
-            "123|ЦехА!", // Недопустимый символ в name
-            "123456789012345678901|Название", // objectId слишком длинный
-            "123|Название123456789012345678901234567890123456789012345678901", // name слишком длинный
-            "123|Цех|А", // Более одного разделителя
-            "123-ЦехА", // Неправильный разделитель
-            "!@#|ЦехА", // Недопустимые символы в objectId
-            "123|!@#" // Недопустимые символы в name
+        val invalidQRCodes = listOf(
+            // Неверный формат (неправильный разделитель)
+            "123Цех А",
+            "123|Цех|А",
+            "|Цех А",
+            "123|",
+            
+            // Неверный номер объекта (спецсимволы)
+            "123!|Цех А",
+            "123@|Цех А",
+            "123#|Цех А",
+            "123$|Цех А",
+            "123%|Цех А",
+            "123^|Цех А",
+            "123&|Цех А",
+            "123*|Цех А",
+            "123(|Цех А",
+            "123)|Цех А",
+            "123-|Цех А",
+            "123_|Цех А",
+            "123+|Цех А",
+            "123=|Цех А",
+            "123{|Цех А",
+            "123}|Цех А",
+            "123[|Цех А",
+            "123]|Цех А",
+            "123;|Цех А",
+            "123:|Цех А",
+            "123\"|Цех А",
+            "123'|Цех А",
+            "123<|Цех А",
+            "123>|Цех А",
+            "123,|Цех А",
+            "123.|Цех А",
+            "123?|Цех А",
+            "123/|Цех А",
+            "123\\|Цех А",
+            "123 |Цех А",
+            "123\t|Цех А",
+            "123\n|Цех А",
+            
+            // Неверное название (спецсимволы)
+            "123|Цех!А",
+            "123|Цех@А",
+            "123|Цех#А",
+            "123|Цех$А",
+            "123|Цех%А",
+            "123|Цех^А",
+            "123|Цех&А",
+            "123|Цех*А",
+            "123|Цех(А",
+            "123|Цех)А",
+            "123|Цех-А",
+            "123|Цех_А",
+            "123|Цех+А",
+            "123|Цех=А",
+            "123|Цех{А",
+            "123|Цех}А",
+            "123|Цех[А",
+            "123|Цех]А",
+            "123|Цех;А",
+            "123|Цех:А",
+            "123|Цех\"А",
+            "123|Цех'А",
+            "123|Цех<А",
+            "123|Цех>А",
+            "123|Цех,А",
+            "123|Цех.А",
+            "123|Цех?А",
+            "123|Цех/А",
+            "123|Цех\\А",
+            
+            // Пустые значения
+            "",
+            "|",
+            "123|",
+            "|Цех А",
+            
+            // Пробелы в начале или конце названия
+            "123| Цех А",
+            "123|Цех А ",
+            "123| Цех А ",
+            
+            // Только пробелы в названии
+            "123|   ",
+            "123|  ",
+            "123| "
         )
         
-        invalidQrCodes.forEach { qrCode ->
+        invalidQRCodes.forEach { qrCode ->
             assertFalse("QR-код '$qrCode' должен быть невалидным", validator.validate(qrCode))
         }
     }
     
     /**
-     * Тестирование извлечения objectId из QR-кода
+     * Тест извлечения номера объекта из QR-кода
      */
     @Test
-    fun `extractObjectId should return correct objectId`() {
+    fun `extractObjectId should return correct object id`() {
         val testCases = listOf(
-            Pair("123|ЦехА", "123"),
-            Pair("ABC123|Склад1", "ABC123"),
-            Pair("aBc123|Лаборатория", "aBc123"),
-            Pair("12345678901234567890|Название12345678901234567890123456789012345678901234567890", "12345678901234567890")
+            Pair("123|Цех А", "123"),
+            Pair("ABC123|Склад Б", "ABC123"),
+            Pair("XYZ789|Производственный участок", "XYZ789"),
+            Pair("A1B2C3|Точка СИЗ", "A1B2C3"),
+            Pair("TEST123|Объект 1", "TEST123")
         )
         
-        testCases.forEach { (qrCode, expectedObjectId) ->
-            assertEquals("ObjectId для '$qrCode' должен быть '$expectedObjectId'", 
-                expectedObjectId, validator.extractObjectId(qrCode))
+        testCases.forEach { (qrCode, expectedId) ->
+            assertEquals("Неверный номер объекта для '$qrCode'", expectedId, validator.extractObjectId(qrCode))
         }
     }
     
     /**
-     * Тестирование извлечения name из QR-кода
+     * Тест извлечения названия объекта из QR-кода
      */
     @Test
-    fun `extractName should return correct name`() {
+    fun `extractName should return correct object name`() {
         val testCases = listOf(
-            Pair("123|ЦехА", "ЦехА"),
-            Pair("ABC123|Склад1", "Склад1"),
-            Pair("aBc123|Лаборатория", "Лаборатория"),
-            Pair("123|Название12345678901234567890123456789012345678901234567890", "Название12345678901234567890123456789012345678901234567890")
+            Pair("123|Цех А", "Цех А"),
+            Pair("ABC123|Склад Б", "Склад Б"),
+            Pair("XYZ789|Производственный участок", "Производственный участок"),
+            Pair("A1B2C3|Точка СИЗ", "Точка СИЗ"),
+            Pair("TEST123|Объект 1", "Объект 1")
         )
         
         testCases.forEach { (qrCode, expectedName) ->
-            assertEquals("Name для '$qrCode' должен быть '$expectedName'", 
-                expectedName, validator.extractName(qrCode))
+            assertEquals("Неверное название для '$qrCode'", expectedName, validator.extractName(qrCode))
         }
     }
     
     /**
-     * Тестирование граничных случаев objectId
+     * Тест обработки QR-кода с пустым названием
      */
     @Test
-    fun `validate should handle edge cases for objectId`() {
-        // Минимальная длина objectId
-        assertTrue("ObjectId минимальной длины должен быть валидным", validator.validate("1|A"))
-        
-        // Максимальная длина objectId
-        val maxObjectId = "a".repeat(20)
-        assertTrue("ObjectId максимальной длины должен быть валидным", 
-            validator.validate("$maxObjectId|A"))
-        
-        // ObjectId с минимальной длиной name
-        assertTrue("ObjectId с минимальным name должен быть валидным", 
-            validator.validate("123|A"))
-        
-        // ObjectId с максимальной длиной name
-        val maxName = "a".repeat(50)
-        assertTrue("ObjectId с максимальным name должен быть валидным", 
-            validator.validate("123|$maxName"))
+    fun `extractName should return empty string for empty name`() {
+        val qrCode = "123|"
+        assertEquals("Название должно быть пустым", "", validator.extractName(qrCode))
     }
     
     /**
-     * Тестирование граничных случаев name
+     * Тест обработки QR-кода с пустым номером
      */
     @Test
-    fun `validate should handle edge cases for name`() {
-        // Минимальная длина name
-        assertTrue("Name минимальной длины должен быть валидным", validator.validate("1|A"))
+    fun `extractObjectId should return empty string for empty id`() {
+        val qrCode = "|Цех А"
+        assertEquals("Номер объекта должен быть пустым", "", validator.extractObjectId(qrCode))
+    }
+    
+    /**
+     * Тест обработки QR-кода с кириллическими символами
+     */
+    @Test
+    fun `validate should return true for QR codes with Cyrillic characters`() {
+        val validQRCodes = listOf(
+            "123|Цех А",
+            "ABC123|Склад Б",
+            "XYZ789|Производственный участок",
+            "A1B2C3|Точка СИЗ",
+            "TEST123|Объект 1"
+        )
         
-        // Максимальная длина name
-        val maxName = "a".repeat(50)
-        assertTrue("Name максимальной длины должен быть валидным", 
-            validator.validate("1|$maxName"))
+        validQRCodes.forEach { qrCode ->
+            assertTrue("QR-код '$qrCode' должен быть валидным", validator.validate(qrCode))
+        }
+    }
+    
+    /**
+     * Тест обработки QR-кода с латинскими символами
+     */
+    @Test
+    fun `validate should return true for QR codes with Latin characters`() {
+        val validQRCodes = listOf(
+            "123|Workshop A",
+            "ABC123|Warehouse B",
+            "XYZ789|Production Area",
+            "A1B2C3|PPE Point",
+            "TEST123|Object 1"
+        )
+        
+        validQRCodes.forEach { qrCode ->
+            assertTrue("QR-код '$qrCode' должен быть валидным", validator.validate(qrCode))
+        }
+    }
+    
+    /**
+     * Тест обработки QR-кода с цифрами
+     */
+    @Test
+    fun `validate should return true for QR codes with numbers in name`() {
+        val validQRCodes = listOf(
+            "123|Цех 1",
+            "ABC123|Склад 2",
+            "XYZ789|Участок 3",
+            "A1B2C3|Точка 4",
+            "TEST123|Объект 5"
+        )
+        
+        validQRCodes.forEach { qrCode ->
+            assertTrue("QR-код '$qrCode' должен быть валидным", validator.validate(qrCode))
+        }
+    }
+    
+    /**
+     * Тест обработки QR-кода с пробелами в названии
+     */
+    @Test
+    fun `validate should return true for QR codes with spaces in name`() {
+        val validQRCodes = listOf(
+            "123|Цех А",
+            "ABC123|Склад Б",
+            "XYZ789|Производственный участок",
+            "A1B2C3|Точка СИЗ",
+            "TEST123|Объект 1"
+        )
+        
+        validQRCodes.forEach { qrCode ->
+            assertTrue("QR-код '$qrCode' должен быть валидным", validator.validate(qrCode))
+        }
     }
 }

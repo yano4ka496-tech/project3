@@ -2,7 +2,7 @@ package com.safeplant.core.mapping.layers
 
 import android.content.Context
 import com.safeplant.core.mapping.LayerStyle
-import com.safeplant.core.mapping.LayerType
+import com.safeplant.core.mapping.MapLayer
 import com.safeplant.core.storage.AssetManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,15 +14,29 @@ import org.json.JSONObject
 class RoutesLayer(
     id: String,
     style: LayerStyle = LayerStyle.ROUTES
-) : BaseLayer(id, style) {
+) : MapLayer(
+    type = com.safeplant.core.mapping.LayerType.ROUTES,
+    style = style,
+    id = id
+) {
     
     private val context: Context? = null // В реальном приложении будет инжектирован
     private val assetManager = AssetManager(context)
     
     /**
+     * Менеджер для работы с маршрутами
+     */
+    private val routeManager = RouteManager(context)
+    
+    /**
+     * Слой для отображения выбранного маршрута
+     */
+    private val routeLayer = RouteLayer("${id}_selected")
+    
+    /**
      * Список маршрутов
      */
-    private var routes = mutableListOf<RouteFeature>()
+    private var routes = mutableListOf<RouteModel>()
     
     /**
      * Информация для всплывающих окон
@@ -30,48 +44,22 @@ class RoutesLayer(
     private var popupInfo = mutableMapOf<String, PopupInfo>()
     
     /**
+     * ID выбранного маршрута
+     */
+    private var selectedRouteId: String? = null
+    
+    /**
      * Загружает данные слоя из assets
      */
     override fun loadData() {
         try {
-            val geoJsonData = assetManager.loadFromAssets("geojson/routes.geojson")
-            if (geoJsonData.isNotEmpty()) {
-                parseGeoJson(geoJsonData)
-            }
-        } catch (e: Exception) {
-            // Обработка ошибки загрузки данных
-            // В реальном приложении здесь будет логирование и уведомление пользователя
-        }
-    }
-    
-    /**
-     * Парсит GeoJSON данные
-     */
-    private fun parseGeoJson(geoJsonData: String) {
-        try {
-            val jsonObject = JSONObject(geoJsonData)
-            val features = jsonObject.getJSONArray("features")
-            
-            routes.clear()
-            popupInfo.clear()
-            
-            for (i in 0 until features.length()) {
-                val feature = features.getJSONObject(i)
-                val geometry = feature.getJSONObject("geometry")
-                val properties = feature.getJSONObject("properties")
+            // Используем RouteManager для загрузки маршрутов
+            if (routeManager.loadRoutes()) {
+                routes = routeManager.getRoutes().toMutableList()
                 
-                // Проверяем тип геометрии (ожидается LineString)
-                if (geometry.getString("type") == "LineString") {
-                    val route = RouteFeature(
-                        id = feature.getString("id"),
-                        name = properties.optString("name", "Неизвестный маршрут"),
-                        description = properties.optString("description", "Нет описания"),
-                        coordinates = parseLineStringCoordinates(geometry.getJSONArray("coordinates"))
-                    )
-                    
-                    routes.add(route)
-                    
-                    // Сохраняем информацию для всплывающего окна
+                // Создаем информацию для всплывающих окон
+                popupInfo.clear()
+                for (route in routes) {
                     popupInfo[route.id] = PopupInfo(
                         title = route.name,
                         description = route.description,
@@ -80,30 +68,18 @@ class RoutesLayer(
                 }
             }
         } catch (e: Exception) {
-            // Обработка ошибки парсинга
-            // В реальном приложении здесь будет логирование
+            // Обработка ошибки загрузки данных
+            // В реальном приложении здесь будет логирование и уведомление пользователя
         }
-    }
-    
-    /**
-     * Парсит координаты линии
-     */
-    private fun parseLineStringCoordinates(coordinatesArray: JSONArray): List<Double> {
-        val result = mutableListOf<Double>()
-        
-        for (i in 0 until coordinatesArray.length()) {
-            val point = coordinatesArray.getJSONArray(i)
-            result.add(point.getDouble(0)) // longitude
-            result.add(point.getDouble(1)) // latitude
-        }
-        
-        return result
     }
     
     /**
      * Отрисовывает слой на карте
      */
     override fun render() {
+        // Отрисовываем слой маршрутов
+        routeLayer.render()
+        
         // В реальном приложении здесь будет код отрисовки линий на карте
         // Для заглушки просто логируем
         println("Отрисовка ${routes.size} маршрутов")
@@ -115,6 +91,8 @@ class RoutesLayer(
     override fun cleanup() {
         routes.clear()
         popupInfo.clear()
+        routeManager.clearRoutes()
+        routeLayer.cleanup()
     }
     
     /**
@@ -134,7 +112,7 @@ class RoutesLayer(
     /**
      * Возвращает список маршрутов
      */
-    fun getRoutes(): List<RouteFeature> = routes
+    fun getRoutes(): List<RouteModel> = routes
     
     /**
      * Возвращает информацию для всплывающих окон
@@ -142,12 +120,52 @@ class RoutesLayer(
     fun getPopupInfo(): Map<String, PopupInfo> = popupInfo
     
     /**
-     * Класс для представления маршрута
+     * Возвращает маршрут по ID
      */
-    data class RouteFeature(
-        val id: String,
-        val name: String,
-        val description: String,
-        val coordinates: List<Double>
-    )
+    fun getRouteById(id: String): RouteModel? {
+        return routeManager.getRouteById(id)
+    }
+    
+    /**
+     * Возвращает маршрут по имени
+     */
+    fun getRouteByName(name: String): RouteModel? {
+        return routeManager.getRouteByName(name)
+    }
+    
+    /**
+     * Проверяет, существует ли маршрут с указанным ID
+     */
+    fun hasRoute(id: String): Boolean {
+        return routeManager.hasRoute(id)
+    }
+    
+    /**
+     * Устанавливает выбранный маршрут
+     */
+    fun setSelectedRoute(routeId: String) {
+        selectedRouteId = routeId
+        val route = getRouteById(routeId)
+        routeLayer.setRoute(route)
+    }
+    
+    /**
+     * Очищает выбранный маршрут
+     */
+    fun clearSelectedRoute() {
+        selectedRouteId = null
+        routeLayer.setRoute(null)
+    }
+    
+    /**
+     * Возвращает ID выбранного маршрута
+     */
+    fun getSelectedRouteId(): String? = selectedRouteId
+    
+    /**
+     * Проверяет, заблокирован ли выбранный маршрут
+     */
+    fun isRouteBlocked(): Boolean {
+        return routeLayer.isBlocked()
+    }
 }
