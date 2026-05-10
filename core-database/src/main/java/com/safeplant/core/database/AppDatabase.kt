@@ -21,8 +21,6 @@ import com.safeplant.core.database.entity.Section
 import com.safeplant.core.database.entity.TrainingTextContent
 import com.safeplant.core.database.entity.TrainingVideo
 import com.safeplant.core.database.entity.VideoPlaybackState
-import com.safeplant.core.database.migration.Migration6To7
-import com.safeplant.core.database.migration.Migration7To8
 
 @Database(
     entities = [
@@ -33,7 +31,7 @@ import com.safeplant.core.database.migration.Migration7To8
         Section::class,
         TrainingTextContent::class,
         Bookmark::class,
-        VideoPlaybackState::class
+        VideoPlaybackState::class,
     ],
     version = 8,
     exportSchema = false,
@@ -62,13 +60,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "safeplant_database",
-                )
-                    .addMigrations(Migration6To7(), Migration7To8())
-                    .build()
+                val instance =
+                    Room.databaseBuilder(
+                        context.applicationContext,
+                        AppDatabase::class.java,
+                        "safeplant_database",
+                    )
+                        .build()
                 this.instance = instance
                 instance
             }

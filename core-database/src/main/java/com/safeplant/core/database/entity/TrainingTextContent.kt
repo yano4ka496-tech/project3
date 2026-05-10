@@ -16,8 +16,8 @@ import androidx.room.PrimaryKey
     tableName = "training_text_content",
     indices = [
         Index(value = ["sectionId"]),
-        Index(value = ["order"])
-    ]
+        Index(value = ["order"]),
+    ],
 )
 data class TrainingTextContent(
     @PrimaryKey(autoGenerate = true)

@@ -1,13 +1,8 @@
 package com.safeplant.feature.training
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.safeplant.core.database.dao.TrainingVideoDao
-import com.safeplant.core.database.dao.VideoPlaybackStateDao
-import com.safeplant.core.database.entity.TrainingVideo
-import com.safeplant.core.database.entity.VideoPlaybackState
-import com.safeplant.core.storage.VideoCopier
+import com.safeplant.core.security.PositionStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,162 +10,75 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * ViewModel для экрана обучения
- * Управляет копированием видео и состоянием воспроизведения
- */
 @HiltViewModel
 class TrainingViewModel @Inject constructor(
-    private val context: Context,
-    private val trainingVideoDao: TrainingVideoDao,
-    private val videoPlaybackStateDao: VideoPlaybackStateDao,
-    private val videoCopier: VideoCopier
+    private val positionStorage: PositionStorage
 ) : ViewModel() {
-    
-    private val _uiState = MutableStateFlow<TrainingUiState>(TrainingUiState.Loading)
-    val uiState: StateFlow<TrainingUiState> = _uiState.asStateFlow()
-    
-    private val _selectedVideo = MutableStateFlow<TrainingVideo?>(null)
-    val selectedVideo: StateFlow<TrainingVideo?> = _selectedVideo.asStateFlow()
-    
-    init {
-        loadTrainingVideos()
-    }
-    
-    /**
-     * Загружает список обучающих видео из базы данных
-     */
-    private fun loadTrainingVideos() {
-        viewModelScope.launch {
-            try {
-                // Получаем видео из базы данных
-                val videos = trainingVideoDao.getAll()
-                
-                if (videos.isEmpty()) {
-                    // Если видео нет в базе, добавляем их
-                    initializeVideos()
-                    _uiState.value = TrainingUiState.Ready(emptyList(), null)
-                } else {
-                    // Копируем видео при необходимости
-                    copyVideosIfNeeded()
-                    
-                    // Устанавливаем состояние готовности
-                    _uiState.value = TrainingUiState.Ready(videos, null)
-                }
-            } catch (e: Exception) {
-                _uiState.value = TrainingUiState.Error("Ошибка загрузки видео: ${e.message}")
-            }
-        }
-    }
-    
-    /**
-     * Инициализирует видео в базе данных
-     */
-    private suspend fun initializeVideos() {
-        // В реальном приложении здесь будет добавление видео из конфигурации
-        // Для примера добавляем тестовое видео
-        val testVideo = TrainingVideo(
-            title = "Обучение технике безопасности",
-            fileName = "safety_training.mp4",
-            duration = 300 // 5 минут
-        )
-        trainingVideoDao.insert(testVideo)
-    }
-    
-    /**
-     * Копирует видео из assets во внутреннее хранилище при необходимости
-     */
-    private fun copyVideosIfNeeded() {
-        viewModelScope.launch {
-            try {
-                val result = videoCopier.copyAllVideos()
-                
-                if (!result.success) {
-                    // Если копирование не удалось, показываем ошибки
-                    val errorMessage = if (result.errorMessages.isNotEmpty()) {
-                        "Ошибка копирования видео:\n${result.errorMessages.joinToString("\n")}"
-                    } else {
-                        "Не удалось скопировать видео"
-                    }
-                    _uiState.value = TrainingUiState.Error(errorMessage)
-                }
-            } catch (e: Exception) {
-                _uiState.value = TrainingUiState.Error("Ошибка копирования видео: ${e.message}")
-            }
-        }
-    }
-    
-    /**
-     * Выбирает видео для воспроизведения
-     */
-    fun selectVideo(video: TrainingVideo) {
-        _selectedVideo.value = video
-        
-        // Загружаем состояние воспроизведения для этого видео
-        viewModelScope.launch {
-            val playbackState = videoPlaybackStateDao.getPosition(video.id)
-            // В реальном приложении здесь будет обновление состояния плеера
-        }
-    }
-    
-    /**
-     * Обновляет позицию воспроизведения видео
-     */
-    fun updatePlaybackPosition(videoId: Long, position: Long) {
-        viewModelScope.launch {
-            try {
-                videoPlaybackStateDao.updatePosition(
-                    VideoPlaybackState(
-                        videoId = videoId,
-                        position = position,
-                        lastPlayedDate = System.currentTimeMillis()
-                    )
-                )
-            } catch (e: Exception) {
-                // Обработка ошибки сохранения позиции
-            }
-        }
-    }
-    
-    /**
-     * Обновляет состояние воспроизведения (играет/пауза)
-     */
-    fun updatePlaybackState(videoId: Long, isPlaying: Boolean) {
-        // В реальном приложении здесь будет обновление состояния плеера
-        viewModelScope.launch {
-            try {
-                val currentState = videoPlaybackStateDao.getPosition(videoId)
-                if (currentState != null) {
-                    videoPlaybackStateDao.updatePosition(
-                        currentState.copy(
-                            lastPlayedDate = System.currentTimeMillis()
-                        )
-                    )
-                }
-            } catch (e: Exception) {
-                // Обработка ошибки
-            }
-        }
-    }
-    
-    /**
-     * Получает путь к видео файлу
-     */
-    fun getVideoPath(fileName: String): String? {
-        return videoCopier.getVideoPath(fileName)
-    }
-}
 
-/**
- * Состояние UI для экрана обучения
- */
-sealed class TrainingUiState {
-    object Loading : TrainingUiState()
-    
-    data class Error(val message: String) : TrainingUiState()
-    
-    data class Ready(
-        val videos: List<TrainingVideo>,
-        val selectedVideo: TrainingVideo?
-    ) : TrainingUiState()
+    private val _sections = MutableStateFlow(TrainingData.sections)
+    val sections: StateFlow<List<TrainingSection>> = _sections.asStateFlow()
+
+    private val _selectedSection = MutableStateFlow<TrainingSection?>(null)
+    val selectedSection: StateFlow<TrainingSection?> = _selectedSection.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _favorites = MutableStateFlow<Set<String>>(emptySet())
+    val favorites: StateFlow<Set<String>> = _favorites.asStateFlow()
+
+    init {
+        loadFavorites()
+    }
+
+    fun selectSection(section: TrainingSection) {
+        _selectedSection.value = section
+    }
+
+    fun navigateBack() {
+        _selectedSection.value = null
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun toggleFavorite(sectionId: String) {
+        viewModelScope.launch {
+            val newFavorites = if (_favorites.value.contains(sectionId)) {
+                _favorites.value - sectionId
+            } else {
+                _favorites.value + sectionId
+            }
+            _favorites.value = newFavorites
+            saveFavorites(newFavorites)
+        }
+    }
+
+    private fun loadFavorites() {
+        viewModelScope.launch {
+            val favs = positionStorage.getFavorites() ?: emptySet()
+            _favorites.value = favs.toSet()
+        }
+    }
+
+    private suspend fun saveFavorites(favs: Set<String>) {
+        positionStorage.saveFavorites(favs.toList())
+    }
+
+    fun getFilteredSections(): List<TrainingSection> {
+        val query = _searchQuery.value.lowercase()
+        return if (query.isBlank()) {
+            _sections.value
+        } else {
+            _sections.value.filter {
+                it.title.lowercase().contains(query) ||
+                        it.content.lowercase().contains(query)
+            }
+        }
+    }
+
+    fun getFavoriteSections(): List<TrainingSection> {
+        return _sections.value.filter { _favorites.value.contains(it.id) }
+    }
 }

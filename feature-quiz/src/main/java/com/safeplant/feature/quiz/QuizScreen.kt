@@ -1,138 +1,156 @@
 package com.safeplant.feature.quiz
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.safeplant.core.navigation.NavigationDestinations
-import com.safeplant.feature.profile.ProfileViewModel
+import androidx.navigation.NavController
 
-/**
- * Экран квиза
- * @param onNavigateToMap Функция перехода на экран карты
- * @param onNavigateToProfile Функция перехода на экран профиля
- * @param onVersionUpdateDetected Функция вызова при обнаружении обновления версии
- */
 @Composable
 fun QuizScreen(
-    onNavigateToMap: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {},
-    onVersionUpdateDetected: () -> Unit = {}
+    navController: NavController,
+    viewModel: QuizViewModel = hiltViewModel()
 ) {
-    val quizViewModel: QuizViewModel = hiltViewModel()
-    val profileViewModel: ProfileViewModel = hiltViewModel()
-    
-    // Проверка версии приложения при запуске
-    LaunchedEffect(Unit) {
-        val versionChanged = profileViewModel.checkVersionAndResetAccessIfNeeded()
-        if (versionChanged) {
-            onVersionUpdateDetected()
-        }
+    val currentQuestion by viewModel.currentQuestionIndex.collectAsState()
+    val answers by viewModel.answers.collectAsState()
+    val isFinished by viewModel.isQuizFinished.collectAsState()
+    val score by viewModel.score.collectAsState()
+    val isSuccess by viewModel.isSuccess.collectAsState()
+
+    if (isFinished) {
+        ResultScreen(
+            score = score,
+            total = viewModel.totalQuestions,
+            isSuccess = isSuccess,
+            onRetry = { viewModel.resetQuiz() },
+            onNavigateToMap = { navController.navigate("map") }
+        )
+    } else {
+        QuestionScreen(
+            question = viewModel.currentQuestion,
+            currentIndex = currentQuestion + 1,
+            total = viewModel.totalQuestions,
+            selectedAnswer = answers[currentQuestion],
+            onAnswerSelected = { answerIndex -> viewModel.selectAnswer(answerIndex) },
+            onNext = { viewModel.nextQuestion() },
+            onPrevious = { viewModel.previousQuestion() },
+            onFinish = { viewModel.finishQuiz() },
+            isLast = currentQuestion == viewModel.totalQuestions - 1
+        )
     }
-    
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Экран квиза",
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            
-            // Кнопка для тестирования успешного прохождения квиза
-            Button(
-                onClick = {
-                    // При успешном прохождении квиза обновляем допуск
-                    quizViewModel.onQuizSuccess()
-                    // Переходим на карту
-                    onNavigateToMap()
-                },
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("Пройти квиз (успешно)")
-            }
-            
-            // Кнопка для тестирования провала квиза
-            Button(
-                onClick = {
-                    // При провале квиза просто переходим на карту
-                    onNavigateToMap()
-                },
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("Пройти квиз (неудачно)")
-            }
-            
-            // Кнопка для перехода на карту
-            Button(
-                onClick = onNavigateToMap,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("Перейти на карту")
-            }
-            
-            // Кнопка для перехода на профиль
-            Button(
-                onClick = onNavigateToProfile
-            ) {
-                Text("Перейти в профиль")
+}
+
+@Composable
+fun QuestionScreen(
+    question: Question,
+    currentIndex: Int,
+    total: Int,
+    selectedAnswer: Int,
+    onAnswerSelected: (Int) -> Unit,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
+    onFinish: () -> Unit,
+    isLast: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Text(text = "Вопрос $currentIndex из $total", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = question.text, style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            question.options.forEachIndexed { index, option ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selectedAnswer == index,
+                        onClick = { onAnswerSelected(index) }
+                    )
+                    Text(
+                        text = option,
+                        modifier = Modifier.padding(start = 8.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
-        
-        // Диалог обновления версии
-        if (profileViewModel.showVersionUpdateDialog.collectAsState().value) {
-            VersionUpdateDialog(
-                onConfirm = {
-                    profileViewModel.confirmVersionUpdate()
-                },
-                onDismiss = {
-                    profileViewModel.cancelVersionUpdate()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = onPrevious,
+                enabled = currentIndex > 1
+            ) {
+                Text("Назад")
+            }
+
+            if (isLast) {
+                Button(
+                    onClick = onFinish,
+                    enabled = selectedAnswer != -1
+                ) {
+                    Text("Завершить")
                 }
-            )
+            } else {
+                Button(
+                    onClick = onNext,
+                    enabled = selectedAnswer != -1
+                ) {
+                    Text("Далее")
+                }
+            }
         }
     }
 }
 
-/**
- * Диалоговое окно обновления версии приложения
- */
 @Composable
-private fun VersionUpdateDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+fun ResultScreen(
+    score: Int,
+    total: Int,
+    isSuccess: Boolean,
+    onRetry: () -> Unit,
+    onNavigateToMap: () -> Unit
 ) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { androidx.compose.material3.Text(text = "Обновление версии приложения") },
-        text = { 
-            androidx.compose.material3.Text(
-                text = "Обнаружено обновление версии приложения. Все данные о допусках будут сброшены. Пройдите квиз для получения нового допуска."
-            ) 
-        },
-        confirmButton = {
-            androidx.compose.material3.Button(onClick = onConfirm) {
-                androidx.compose.material3.Text("Принять")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = if (isSuccess) "Поздравляем! Допуск получен" else "К сожалению, вы не прошли",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Правильных ответов: $score из $total",
+            style = MaterialTheme.typography.titleLarge
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+        ) {
+            Button(onClick = onRetry) {
+                Text("Пройти заново")
             }
-        },
-        dismissButton = {
-            androidx.compose.material3.Button(onClick = onDismiss) {
-                androidx.compose.material3.Text("Отмена")
+            Button(onClick = onNavigateToMap) {
+                Text("На карту")
             }
         }
-    )
+    }
 }

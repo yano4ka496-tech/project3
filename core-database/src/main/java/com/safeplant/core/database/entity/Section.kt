@@ -16,8 +16,8 @@ import androidx.room.PrimaryKey
     tableName = "section",
     indices = [
         Index(value = ["parentId"]),
-        Index(value = ["order"])
-    ]
+        Index(value = ["order"]),
+    ],
 )
 data class Section(
     @PrimaryKey(autoGenerate = true)

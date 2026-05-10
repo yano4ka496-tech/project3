@@ -3,296 +3,108 @@ package com.safeplant.feature.quiz
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.safeplant.core.database.dao.AccessPassDao
-import com.safeplant.core.database.dao.QuizResultDao
 import com.safeplant.core.database.entity.AccessPass
-import com.safeplant.core.database.entity.QuizResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-/**
- * ViewModel для экрана квиза
- * Управляет прохождением теста, проверкой результатов и обновлением допуска
- */
-class QuizViewModel(
-    private val accessPassDao: AccessPassDao,
-    private val quizResultDao: QuizResultDao
+@HiltViewModel
+class QuizViewModel @Inject constructor(
+    private val accessPassDao: AccessPassDao
 ) : ViewModel() {
-    
-    private val _quizState = MutableStateFlow<QuizState>(QuizState.NotStarted)
-    val quizState: StateFlow<QuizState> = _quizState.asStateFlow()
-    
+
+    private val questions = listOf(
+        Question(1, "Какой цвет у травы?", listOf("Красный", "Зелёный", "Синий"), 1),
+        Question(2, "Сколько дней в неделе?", listOf("5", "6", "7"), 2),
+        Question(3, "Какая планета самая большая?", listOf("Земля", "Юпитер", "Марс"), 1),
+        Question(4, "Столица России?", listOf("Москва", "СПб", "Новосибирск"), 0),
+        Question(5, "2+2=?", listOf("3", "4", "5"), 1),
+        Question(6, "Вода замерзает при 0°C?", listOf("Да", "Нет"), 0),
+        Question(7, "Кто написал 'Войну и мир'?", listOf("Достоевский", "Толстой", "Пушкин"), 1),
+        Question(8, "Год основания Москвы?", listOf("1147", "1240", "988"), 0),
+        Question(9, "Самый большой океан?", listOf("Атлантический", "Индийский", "Тихий"), 2),
+        Question(10, "Сколько цветов в радуге?", listOf("5", "6", "7"), 2)
+    )
+
     private val _currentQuestionIndex = MutableStateFlow(0)
     val currentQuestionIndex: StateFlow<Int> = _currentQuestionIndex.asStateFlow()
-    
+
+    private val _answers = MutableStateFlow(Array(questions.size) { -1 })
+    val answers: StateFlow<Array<Int>> = _answers.asStateFlow()
+
+    private val _isQuizFinished = MutableStateFlow(false)
+    val isQuizFinished: StateFlow<Boolean> = _isQuizFinished.asStateFlow()
+
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score.asStateFlow()
-    
-    private val _questions = MutableStateFlow<List<QuizQuestion>>(emptyList())
-    val questions: StateFlow<List<QuizQuestion>> = _questions.asStateFlow()
-    
-    private val _selectedAnswers = MutableStateFlow<MutableMap<Int, Int>>(mutableMapOf())
-    val selectedAnswers: StateFlow<Map<Int, Int>> = _selectedAnswers.asStateFlow()
-    
-    private val _remainingTime = MutableStateFlow<Long>(0)
-    val remainingTime: StateFlow<Long> = _remainingTime.asStateFlow()
-    
-    private val _accessPass = MutableStateFlow<AccessPass?>(null)
-    val accessPass: StateFlow<AccessPass?> = _accessPass.asStateFlow()
-    
-    /**
-     * Состояние квиза
-     */
-    sealed class QuizState {
-        object NotStarted : QuizState()
-        object InProgress : QuizState()
-        object Completed : QuizState()
-        object Passed : QuizState()
-        object Failed : QuizState()
+
+    private val _isSuccess = MutableStateFlow(false)
+    val isSuccess: StateFlow<Boolean> = _isSuccess.asStateFlow()
+
+    val currentQuestion: Question
+        get() = questions[_currentQuestionIndex.value]
+
+    val totalQuestions: Int
+        get() = questions.size
+
+    fun selectAnswer(answerIndex: Int) {
+        val newAnswers = _answers.value.toMutableList()
+        newAnswers[_currentQuestionIndex.value] = answerIndex
+        _answers.value = newAnswers.toTypedArray()
     }
-    
-    /**
-     * Инициализация при создании ViewModel
-     */
-    init {
-        loadQuestions()
-        loadAccessPass()
-    }
-    
-    /**
-     * Загружает вопросы из базы данных
-     */
-    private fun loadQuestions() {
-        viewModelScope.launch {
-            // В реальном приложении здесь будет загрузка из базы данных
-            // Для примера используем тестовые вопросы
-            val testQuestions = listOf(
-                QuizQuestion(
-                    id = 1,
-                    question = "Что делать при обнаружении пожара?",
-                    options = listOf("Паниковать", "Немедленно сообщить", "Игнорировать", "Попробовать потушить самому"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 2,
-                    question = "Какие средства индивидуальной защиты обязательны при работе в цехе?",
-                    options = listOf("Респиратор", "Каска", "Перчатки", "Все перечисленные"),
-                    correctAnswer = 3
-                ),
-                QuizQuestion(
-                    id = 3,
-                    question = "Как часто проходить инструктаж по технике безопасности?",
-                    options = listOf("Раз в месяц", "Раз в квартал", "Раз в полгода", "Перед началом работы"),
-                    correctAnswer = 3
-                ),
-                QuizQuestion(
-                    id = 4,
-                    question = "Что делать при обнаружении неисправного оборудования?",
-                    options = listOf("Продолжить работу", "Сообщить мастеру", "Попробовать починить самому", "Игнорировать"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 5,
-                    question = "Какие действия запрещены в цехе?",
-                    options = listOf("Использовать средства защиты", "Есть и пить", "Следовать инструкциям", "Сообщать о проблемах"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 6,
-                    question = "Что делать при получении травмы?",
-                    options = listOf("Продолжить работу", "Немедленно обратиться в медпункт", "Потушить кровь", "Игнорировать"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 7,
-                    question = "Какие зоны считаются опасными?",
-                    options = listOf("Только цех А", "Все зоны с работающим оборудованием", "Только склад", "Только открытые площадки"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 8,
-                    question = "Какие документы нужно иметь при входе в опасную зону?",
-                    options = listOf("Паспорт", "Допуск", "Медицинскую книжку", "Все перечисленные"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 9,
-                    question = "Что делать при эвакуации?",
-                    options = listOf("Оставаться на месте", "Следовать указаниям", "Брать с собой вещи", "Спускаться на лифте"),
-                    correctAnswer = 1
-                ),
-                QuizQuestion(
-                    id = 10,
-                    question = "Какие действия запрещены при работе с химикатами?",
-                    options = listOf("Использовать средства защиты", "Есть и пить", "Следовать инструкциям", "Сообщать о проблемах"),
-                    correctAnswer = 1
-                )
-            )
-            _questions.value = testQuestions
+
+    fun nextQuestion() {
+        if (_currentQuestionIndex.value < questions.size - 1) {
+            _currentQuestionIndex.value++
         }
     }
-    
-    /**
-     * Загружает действующий допуск
-     */
-    private fun loadAccessPass() {
-        viewModelScope.launch {
-            val currentTime = System.currentTimeMillis()
-            _accessPass.value = accessPassDao.getValidAccessPass("default_user", currentTime)
+
+    fun previousQuestion() {
+        if (_currentQuestionIndex.value > 0) {
+            _currentQuestionIndex.value--
         }
     }
-    
-    /**
-     * Начинает прохождение квиза
-     */
-    fun startQuiz() {
-        _quizState.value = QuizState.InProgress
-        _currentQuestionIndex.value = 0
-        _score.value = 0
-        _selectedAnswers.value = mutableMapOf()
-        _remainingTime.value = TimeUnit.MINUTES.toMillis(10) // 10 минут на прохождение
-    }
-    
-    /**
-     * Выбирает ответ на текущий вопрос
-     */
-    fun selectAnswer(questionIndex: Int, answerIndex: Int) {
-        if (_quizState.value != QuizState.InProgress) return
-        
-        _selectedAnswers.value[questionIndex] = answerIndex
-        
-        // Проверяем, все ли вопросы отвечены
-        if (_selectedAnswers.value.size == _questions.value.size) {
-            finishQuiz()
-        }
-    }
-    
-    /**
-     * Завершает квиз и проверяет результат
-     */
-    private fun finishQuiz() {
-        _quizState.value = QuizState.Completed
-        
-        // Подсчитываем правильные ответы
-        var correctCount = 0
-        _questions.value.forEachIndexed { index, question ->
-            val selectedAnswer = _selectedAnswers.value[index]
-            if (selectedAnswer == question.correctAnswer) {
-                correctCount++
-            }
-        }
-        
+
+    fun finishQuiz() {
+        val correctCount = _answers.value.zip(questions) { selected, q ->
+            if (selected == q.correctIndex) 1 else 0
+        }.sum()
         _score.value = correctCount
-        
-        // Проверяем, прошел ли тест (8 из 10)
-        if (correctCount >= 8) {
-            _quizState.value = QuizState.Passed
-            updateAccessPass()
-        } else {
-            _quizState.value = QuizState.Failed
-        }
-        
-        // Сохраняем результат
-        saveQuizResult(correctCount)
-    }
-    
-    /**
-     * Обновляет срок действия допуска при успешном прохождении
-     */
-    private fun updateAccessPass() {
-        viewModelScope.launch {
-            val currentTime = System.currentTimeMillis()
-            val expiryDate = currentTime + TimeUnit.DAYS.toMillis(30) // 30 дней
-            
-            // Создаем новый допуск
-            val newAccessPass = AccessPass(
-                userId = "default_user",
-                issuedAt = currentTime,
-                expiryDate = expiryDate,
-                isValid = true
-            )
-            
-            // Сохраняем в базу данных
-            accessPassDao.insertOrUpdate(newAccessPass)
-            
-            // Обновляем состояние
-            _accessPass.value = newAccessPass
-        }
-    }
-    
-    /**
-     * Сохраняет результат прохождения квиза
-     */
-    private fun saveQuizResult(correctCount: Int) {
-        viewModelScope.launch {
-            val quizResult = QuizResult(
-                timestamp = System.currentTimeMillis(),
-                correctAnswers = correctCount,
-                totalQuestions = _questions.value.size,
-                passed = correctCount >= 8
-            )
-            
-            quizResultDao.insert(quizResult)
-        }
-    }
-    
-    /**
-     * Проверяет, можно ли начать повторное прохождение квиза
-     */
-    fun canRetakeQuiz(): Boolean {
-        val currentTime = System.currentTimeMillis()
-        val hasValidPass = accessPassDao.hasValidAccessPass("default_user", currentTime)
-        
-        // Разрешаем повторное прохождение, если нет действующего допуска
-        return !hasValidPass
-    }
-    
-    /**
-     * Форматирует оставшееся время в читаемом формате
-     */
-    fun formatRemainingTime(): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(_remainingTime.value)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(_remainingTime.value) % 60
-        return String.format("%02d:%02d", minutes, seconds)
-    }
-    
-    /**
-     * Обновляет оставшееся время
-     */
-    fun updateRemainingTime() {
-        viewModelScope.launch {
-            if (_quizState.value == QuizState.InProgress) {
-                _remainingTime.value -= 1000 // Уменьшаем на 1 секунду
-                
-                // Если время вышло, завершаем тест
-                if (_remainingTime.value <= 0) {
-                    _remainingTime.value = 0
-                    finishQuiz()
-                }
+        val success = correctCount >= 8
+        _isSuccess.value = success
+        _isQuizFinished.value = true
+
+        if (success) {
+            viewModelScope.launch {
+                val userId = "current_user"
+                val issuedAt = System.currentTimeMillis()
+                val expiryDate = issuedAt + 30L * 24 * 60 * 60 * 1000 // 30 дней
+                val accessPass = AccessPass(
+                    userId = userId,
+                    issuedAt = issuedAt,
+                    expiryDate = expiryDate,
+                    isValid = true
+                )
+                accessPassDao.insertOrUpdate(accessPass)
             }
         }
     }
-    
-    /**
-     * Сбрасывает состояние квиза
-     */
+
     fun resetQuiz() {
-        _quizState.value = QuizState.NotStarted
         _currentQuestionIndex.value = 0
+        _answers.value = Array(questions.size) { -1 }
+        _isQuizFinished.value = false
         _score.value = 0
-        _selectedAnswers.value = mutableMapOf()
-        _remainingTime.value = 0
+        _isSuccess.value = false
     }
 }
 
-/**
- * Модель вопроса квиза
- */
-data class QuizQuestion(
+data class Question(
     val id: Int,
-    val question: String,
+    val text: String,
     val options: List<String>,
-    val correctAnswer: Int
+    val correctIndex: Int
 )

@@ -14,11 +14,19 @@ interface AccessPassDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(accessPass: AccessPass)
 
-    @Query("SELECT * FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentTime ORDER BY expiryDate DESC LIMIT 1")
-    suspend fun getValidAccessPass(userId: String, currentTime: Long): AccessPass?
+    @Query(
+        "SELECT * FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentTime ORDER BY expiryDate DESC LIMIT 1",
+    )
+    suspend fun getValidAccessPass(
+        userId: String,
+        currentTime: Long,
+    ): AccessPass?
 
     @Query("SELECT * FROM access_pass WHERE id = :id AND isValid = 1 AND expiryDate > :currentTime")
-    suspend fun getValidById(id: Long, currentTime: Long): AccessPass?
+    suspend fun getValidById(
+        id: Long,
+        currentTime: Long,
+    ): AccessPass?
 
     @Query("SELECT * FROM access_pass WHERE isValid = 1 AND expiryDate > :currentTime")
     suspend fun getAllValid(currentTime: Long): List<AccessPass>
@@ -30,7 +38,10 @@ interface AccessPassDao {
     suspend fun deleteAll()
 
     @Query("SELECT COUNT(*) > 0 FROM access_pass WHERE userId = :userId AND isValid = 1 AND expiryDate > :currentTime")
-    suspend fun hasValidAccessPass(userId: String, currentTime: Long): Boolean
+    suspend fun hasValidAccessPass(
+        userId: String,
+        currentTime: Long,
+    ): Boolean
 
     suspend fun resetAllAccessPasses() {
         deleteAll()

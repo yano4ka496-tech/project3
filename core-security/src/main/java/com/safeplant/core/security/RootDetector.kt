@@ -7,7 +7,6 @@ import android.content.Context
  * Использует RootBeer для проверки.
  */
 class RootDetector(private val context: Context) {
-
     /**
      * Проверяет наличие root-доступа на устройстве
      * @return true, если root-доступ обнаружен

@@ -19,12 +19,12 @@ class Migration6To7 : Migration(6, 7) {
                 PRIMARY KEY(`videoId`), 
                 FOREIGN KEY(`videoId`) REFERENCES `training_video`(`id`) ON DELETE CASCADE
             )
-            """
+            """,
         )
-        
+
         // Создаем уникальный индекс для videoId
         database.execSQL(
-            "CREATE UNIQUE INDEX IF NOT EXISTS `index_video_playback_state_videoId` ON `video_playback_state` (`videoId`)"
+            "CREATE UNIQUE INDEX IF NOT EXISTS `index_video_playback_state_videoId` ON `video_playback_state` (`videoId`)",
         )
     }
 }

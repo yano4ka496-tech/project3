@@ -13,8 +13,8 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "bookmark",
     indices = [
-        Index(value = ["contentId"])
-    ]
+        Index(value = ["contentId"]),
+    ],
 )
 data class Bookmark(
     @PrimaryKey(autoGenerate = true)

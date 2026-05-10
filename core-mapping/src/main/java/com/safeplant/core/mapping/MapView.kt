@@ -1,46 +1,48 @@
 package com.safeplant.core.mapping
 
+import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.mapbox.mapboxsdk.maps.MapView as MapboxMapView
-import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.Style
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.MapView
+import org.maplibre.android.maps.MapLibreMap
 
-/**
- * Компонент карты с поддержкой слоев
- * Интегрируется с MapLibre GL Native для отображения карты
- */
 @Composable
-fun MapView(
+fun MapLibreMapView(
     modifier: Modifier = Modifier,
-    onMapReady: (MapRenderer, MapController) -> Unit = { _, _ -> },
-    onMapClick: (Double, Double) -> Unit = { _, _ -> },
-    onLayerClick: (LayerType, Any) -> Unit = { _, _ -> }
+    onMapReady: (MapLibreMap) -> Unit = {},
+    onMapClick: (LatLng) -> Unit = {},
+    onMapLongClick: (LatLng) -> Unit = {}
 ) {
-    // Создаем MapView
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            MapboxMapView(context).apply {
-                // Инициализация карты
-               .getMapAsync { mapboxMap ->
-                    // Устанавливаем стиль карты
-                    mapboxMap.setStyle(Style.MAPBOX_STREETS) { style ->
-                        // Уведомляем о готовности карты
-                        val renderer = MapRenderer()
-                        val controller = MapController()
-                        
-                        // Устанавливаем обработчик кликов
-                        mapboxMap.addOnMapClickListener { latLon ->
-                            onMapClick(latLon.latitude, latLon.longitude)
-                        }
-                        
-                        // Уведомляем о готовности карты
-                        onMapReady(renderer, controller)
-                    }
-                }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val mapView = remember { MapView(context) }
+
+    DisposableEffect(Unit) {
+        mapView.onCreate(null)
+        mapView.getMapAsync { mapLibreMap ->
+            onMapReady(mapLibreMap)
+            mapLibreMap.addOnMapClickListener { point ->
+                onMapClick(point)
+                true
             }
+            mapLibreMap.addOnMapLongClickListener { point ->
+                onMapLongClick(point)
+                true
+            }
+        }
+        onDispose {
+            mapView.onDestroy()
+        }
+    }
+
+    AndroidView(
+        factory = { mapView },
+        modifier = modifier,
+        update = { view ->
+            view.onResume()
         }
     )
 }

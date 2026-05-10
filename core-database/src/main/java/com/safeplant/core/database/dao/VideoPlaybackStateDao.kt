@@ -13,7 +13,6 @@ import com.safeplant.core.database.entity.VideoPlaybackState
  */
 @Dao
 interface VideoPlaybackStateDao {
-    
     /**
      * Получить позицию воспроизведения для указанного видео
      * @param videoId Идентификатор видео
@@ -29,19 +28,25 @@ interface VideoPlaybackStateDao {
      * @param lastPlayedDate Дата последнего просмотра в миллисекундах
      */
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updatePosition(videoId: Long, position: Long, lastPlayedDate: Long)
+    suspend fun updatePosition(
+        videoId: Long,
+        position: Long,
+        lastPlayedDate: Long,
+    )
 
     /**
      * Получить последнее просмотренное видео
      * @return TrainingVideo или null, если нет записей
      */
-    @Query("""
+    @Query(
+        """
         SELECT tv.* 
         FROM training_video tv
         INNER JOIN video_playback_state vps ON tv.id = vps.videoId
         ORDER BY vps.lastPlayedDate DESC
         LIMIT 1
-    """)
+    """,
+    )
     suspend fun getLastPlayedVideo(): TrainingVideo?
 
     /**

@@ -18,16 +18,16 @@ import androidx.room.PrimaryKey
             entity = TrainingVideo::class,
             parentColumns = ["id"],
             childColumns = ["videoId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
-        Index(value = ["videoId"], unique = true)
-    ]
+        Index(value = ["videoId"], unique = true),
+    ],
 )
 data class VideoPlaybackState(
     @PrimaryKey(autoGenerate = false)
     val videoId: Long,
     val position: Long,
-    val lastPlayedDate: Long
+    val lastPlayedDate: Long,
 )

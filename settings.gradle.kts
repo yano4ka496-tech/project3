@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "SafePlant"
 include(":app")
-include(":core-navigation")
+// include(":core-navigation")
 include(":core-database")
 include(":core-storage")
 include(":core-security")
