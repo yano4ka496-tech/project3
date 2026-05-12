@@ -1,10 +1,12 @@
 package com.safeplant.feature.quiz
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -14,32 +16,71 @@ fun QuizScreen(
     navController: NavController,
     viewModel: QuizViewModel = hiltViewModel()
 ) {
-    val currentQuestion by viewModel.currentQuestionIndex.collectAsState()
-    val answers by viewModel.answers.collectAsState()
+    val isQuizStarted by viewModel.isQuizStarted.collectAsState()
     val isFinished by viewModel.isQuizFinished.collectAsState()
-    val score by viewModel.score.collectAsState()
-    val isSuccess by viewModel.isSuccess.collectAsState()
 
-    if (isFinished) {
+    if (!isQuizStarted) {
+        StartScreen(
+            onStart = { viewModel.startQuiz() }
+        )
+    } else if (isFinished) {
+        val score by viewModel.score.collectAsState()
+        val isSuccess by viewModel.isSuccess.collectAsState()
+        val total = viewModel.currentQuestions.value.size
         ResultScreen(
             score = score,
-            total = viewModel.totalQuestions,
+            total = total,
             isSuccess = isSuccess,
-            onRetry = { viewModel.resetQuiz() },
+            onRetry = {
+                viewModel.resetQuiz()
+            },
             onNavigateToMap = { navController.navigate("map") }
         )
     } else {
-        QuestionScreen(
-            question = viewModel.currentQuestion,
-            currentIndex = currentQuestion + 1,
-            total = viewModel.totalQuestions,
-            selectedAnswer = answers[currentQuestion],
-            onAnswerSelected = { answerIndex -> viewModel.selectAnswer(answerIndex) },
-            onNext = { viewModel.nextQuestion() },
-            onPrevious = { viewModel.previousQuestion() },
-            onFinish = { viewModel.finishQuiz() },
-            isLast = currentQuestion == viewModel.totalQuestions - 1
-        )
+        val questions by viewModel.currentQuestions.collectAsState()
+        val currentIndex by viewModel.currentQuestionIndex.collectAsState()
+        val answers by viewModel.answers.collectAsState()
+
+        if (questions.isNotEmpty()) {
+            val question = questions[currentIndex]
+            val selectedAnswer = answers[currentIndex] ?: -1
+            QuestionScreen(
+                question = question,
+                currentIndex = currentIndex + 1,
+                total = questions.size,
+                selectedAnswer = selectedAnswer,
+                onAnswerSelected = { answerIndex -> viewModel.selectAnswer(answerIndex) },
+                onNext = { viewModel.nextQuestion() },
+                onPrevious = { viewModel.previousQuestion() },
+                onFinish = { viewModel.finishQuiz() },
+                isLast = currentIndex == questions.size - 1
+            )
+        }
+    }
+}
+
+@Composable
+fun StartScreen(onStart: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            Text(
+                text = "Прохождение квиза для посетителей АО «ТАНЕКО» на знание безопасности труда",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(horizontal = 32.dp)
+            )
+            Button(
+                onClick = onStart,
+                modifier = Modifier.width(200.dp)
+            ) {
+                Text("Начать тест")
+            }
+        }
     }
 }
 
@@ -59,57 +100,79 @@ fun QuestionScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            Text(text = "Вопрос $currentIndex из $total", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = question.text, style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(24.dp))
-
-            question.options.forEachIndexed { index, option ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        selected = selectedAnswer == index,
-                        onClick = { onAnswerSelected(index) }
-                    )
-                    Text(
-                        text = option,
-                        modifier = Modifier.padding(start = 8.dp),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        // Верхняя часть – вопрос
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "${currentIndex}. ${question.text}",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(16.dp)
+            )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        // Нижняя часть – кнопки ответов
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = onPrevious,
-                enabled = currentIndex > 1
-            ) {
-                Text("Назад")
+            val buttonColors = listOf(
+                Color(0xFF2196F3), // синий
+                Color(0xFFF44336), // красный
+                Color(0xFFFFEB3B)  // жёлтый
+            )
+
+            question.options.forEachIndexed { index, option ->
+                Button(
+                    onClick = { onAnswerSelected(index) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = buttonColors[index % buttonColors.size]
+                    )
+                ) {
+                    Text(
+                        text = option,
+                        color = if (buttonColors[index % buttonColors.size] == Color(0xFFFFEB3B)) Color.Black else Color.White,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
             }
 
-            if (isLast) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Button(
-                    onClick = onFinish,
-                    enabled = selectedAnswer != -1
+                    onClick = onPrevious,
+                    enabled = currentIndex > 1
                 ) {
-                    Text("Завершить")
+                    Text("Назад")
                 }
-            } else {
-                Button(
-                    onClick = onNext,
-                    enabled = selectedAnswer != -1
-                ) {
-                    Text("Далее")
+
+                if (isLast) {
+                    Button(
+                        onClick = onFinish,
+                        enabled = selectedAnswer != -1
+                    ) {
+                        Text("Завершить")
+                    }
+                } else {
+                    Button(
+                        onClick = onNext,
+                        enabled = selectedAnswer != -1
+                    ) {
+                        Text("Далее")
+                    }
                 }
             }
         }

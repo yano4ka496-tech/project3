@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
         loadData()
     }
 
-    private fun loadData() {
+    fun loadData() {
         viewModelScope.launch {
             val currentTime = System.currentTimeMillis()
             val userId = "current_user"  // TODO: заменить на реальный userId
@@ -45,7 +45,7 @@ class ProfileViewModel @Inject constructor(
     fun resetAccessPass() {
         viewModelScope.launch {
             accessPassDao.deleteAll()
-            _accessPass.value = null
+            loadData() // обновляем после сброса
         }
     }
 
